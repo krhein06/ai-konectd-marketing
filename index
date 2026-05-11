@@ -1,0 +1,1338 @@
+import React, { useMemo } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+
+const iconPaths = {
+  arrowRight: "M5 12h14M13 5l7 7-7 7",
+  building: "M4 21V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v16M9 21v-4h3v4M8 7h1M12 7h1M8 11h1M12 11h1M20 21V10a2 2 0 0 0-2-2h-1",
+  sparkles: "M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3ZM19 15l.7 2.1L22 18l-2.3.9L19 21l-.7-2.1L16 18l2.3-.9L19 15ZM5 15l.7 2.1L8 18l-2.3.9L5 21l-.7-2.1L2 18l2.3-.9L5 15Z",
+  phone: "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z",
+  star: "M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1L12 2Z",
+  search: "M21 21l-4.4-4.4M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z",
+  gauge: "M21 12a9 9 0 1 0-18 0M12 12l4-4M7 14h10M5 18h14",
+  mapPin: "M12 21s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12ZM12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z",
+  layers: "M12 2 2 7l10 5 10-5-10-5ZM2 12l10 5 10-5M2 17l10 5 10-5",
+  shield: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10ZM9 12l2 2 4-5",
+  zap: "M13 2 3 14h8l-1 8 11-14h-8l1-6Z",
+  barChart: "M4 19V5M4 19h16M8 17v-6M13 17V7M18 17v-9",
+  message: "M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z",
+  calendar: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z",
+  database: "M12 3c5 0 9 1.3 9 3s-4 3-9 3-9-1.3-9-3 4-3 9-3ZM3 6v6c0 1.7 4 3 9 3s9-1.3 9-3V6M3 12v6c0 1.7 4 3 9 3s9-1.3 9-3v-6",
+  users: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8",
+  clock: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 6v6l4 2",
+  check: "M20 6 9 17l-5-5",
+  trendingUp: "M3 17l6-6 4 4 8-8M15 7h6v6",
+  lock: "M7 11V7a5 5 0 0 1 10 0v4M6 11h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z",
+  clipboard: "M9 5h6M9 3h6a2 2 0 0 1 2 2h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2-2ZM8 12h8M8 16h5",
+  wrench: "M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5l-2.6 2.6-2.4-2.4 2.6-2.6Z",
+};
+
+function Icon({ name, className = "h-5 w-5", strokeWidth = 2 }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={iconPaths[name]} />
+    </svg>
+  );
+}
+
+const TRUST_POINTS = [
+  {
+    stat: "24/7",
+    label: "coverage for calls, missed calls, forms, chat, SMS, and basic support",
+    detail: "High-intent prospects do not wait for normal office rhythm. Konectd Marketing keeps the first response moving when your team is busy, closed, or in the field.",
+  },
+  {
+    stat: "1 layer",
+    label: "for lead capture, CRM follow-up, reputation, visibility, campaigns, and reporting",
+    detail: "The value is not another isolated tool. The value is connecting the work that normally lives across inboxes, spreadsheets, call logs, and staff memory.",
+  },
+  {
+    stat: "8 leaks",
+    label: "audited before launch so we automate the right work first",
+    detail: "We look for response gaps, conversation chaos, CRM decay, spreadsheet dependence, reputation weakness, visibility gaps, support load, and owner reporting blind spots.",
+  },
+  {
+    stat: "6 steps",
+    label: "from leakage audit to workflow build, launch, adoption, and optimization",
+    detail: "This is white-glove implementation. We map, configure, test, train, and tune the system instead of handing you a bot builder and wishing you luck.",
+  },
+  {
+    stat: "CRM or spreadsheet",
+    label: "ready for businesses with systems or businesses still running from sheets",
+    detail: "We can work with the operating reality you have today, then create a cleaner path toward better records, follow-up, and visibility.",
+  },
+  {
+    stat: "Human-led",
+    label: "with clear escalation, approval rules, and team ownership",
+    detail: "AI handles repetitive intake and workflow movement. Your team stays in charge of customer judgment, exceptions, approvals, and relationships.",
+  },
+];
+
+const ICP_SIGNALS = [
+  {
+    icon: "phone",
+    title: "High call volume",
+    copy: "The phone rings constantly, calls get missed during jobs or appointments, and customers often choose whoever responds first.",
+  },
+  {
+    icon: "database",
+    title: "CRM discipline is weak",
+    copy: "Leads, job notes, estimates, appointment details, and follow-up tasks are inconsistent because staff are busy serving customers.",
+  },
+  {
+    icon: "clipboard",
+    title: "Spreadsheets run the business",
+    copy: "Contacts, jobs, follow-ups, customer lists, review requests, and status tracking live in sheets that only one or two people understand.",
+  },
+  {
+    icon: "star",
+    title: "Reviews matter to conversion",
+    copy: "The business wins or loses trust before the first conversation because prospects compare reviews, recency, and responsiveness.",
+  },
+  {
+    icon: "calendar",
+    title: "Appointments or estimates drive revenue",
+    copy: "The money is in getting qualified prospects scheduled, confirmed, reminded, and followed up with after the first contact.",
+  },
+  {
+    icon: "barChart",
+    title: "Owner visibility is poor",
+    copy: "The owner knows things are slipping, but cannot see which channel, location, person, or process is creating the leak.",
+  },
+];
+
+const INDUSTRIES = [
+  {
+    name: "Construction companies",
+    pain: "Estimate requests, project questions, vendor calls, and follow-up often hit while the team is on job sites.",
+    win: "Capture inquiries, route urgent messages, organize estimate requests, and keep follow-up visible.",
+  },
+  {
+    name: "Trades and field services",
+    pain: "HVAC, plumbing, electrical, roofing, pest, cleaning, and restoration teams lose jobs when calls hit during field work.",
+    win: "Answer fast, qualify the issue, capture location and urgency, and get the right next step queued.",
+  },
+  {
+    name: "Salons, spas, and med-spa style services",
+    pain: "Booking questions, reschedules, reminders, reviews, and promotional follow-up pile up during appointment-heavy days.",
+    win: "Reduce front-desk load while improving booking flow, review requests, reminders, and customer reactivation.",
+  },
+  {
+    name: "Home and consumer services",
+    pain: "Landscaping, cleaning, automotive, pet services, moving, repair, and local service operators depend on fast trust and fast response.",
+    win: "Unify calls, messages, reviews, offers, and follow-up so customers do not fall through the cracks.",
+  },
+  {
+    name: "Multi-location service brands",
+    pain: "Owners need consistency across locations, but local teams vary in how they answer, follow up, request reviews, and log activity.",
+    win: "Create repeatable workflows, shared visibility, and consistent customer experience across the operation.",
+  },
+  {
+    name: "Spreadsheet-heavy operators",
+    pain: "The business has revenue, customers, and demand, but the operating system is a spreadsheet patched together by whoever is most organized.",
+    win: "Turn scattered sheets into cleaner workflows for capture, status, follow-up, review requests, and reporting.",
+  },
+];
+
+const WHAT_WE_SELL = [
+  {
+    icon: "phone",
+    name: "AI Front Desk",
+    line: "Answer, qualify, route, and book demand before it goes cold.",
+    detail: "Handles calls, missed-call text-back, SMS, chat, web forms, FAQs, service questions, appointment requests, estimate requests, and lead summaries so high-intent prospects do not sit cold while your team is working.",
+    includes: ["24/7 response coverage", "Missed-call recovery", "Lead qualification", "Appointment or estimate routing", "Conversation summaries"],
+    pain: "Missed calls and slow replies are not harmless. They are competitor referrals you paid to create.",
+    accent: "cyan",
+  },
+  {
+    icon: "database",
+    name: "CRM + Spreadsheet Rescue",
+    line: "Stop letting customer information die in notes, texts, and spreadsheets.",
+    detail: "We help structure the current mess: CRM records, spreadsheet lists, lead status, job notes, customer history, follow-up tasks, reactivation lists, and owner visibility. You do not need a perfect system before we start; the implementation creates the path forward.",
+    includes: ["CRM cleanup logic", "Spreadsheet-to-workflow mapping", "Follow-up reminders", "Lead status tracking", "Reactivation lists"],
+    pain: "If nobody trusts the CRM and the spreadsheet is the source of truth, your growth process is fragile.",
+    accent: "emerald",
+  },
+  {
+    icon: "star",
+    name: "Reputation Engine",
+    line: "Turn good service into visible proof buyers trust.",
+    detail: "Runs review requests, drafts responses, monitors feedback patterns, and helps turn completed jobs and happy customers into stronger public trust across search and local profiles.",
+    includes: ["Review requests", "Response drafting", "Sentiment themes", "Feedback alerts", "Trust-building workflows"],
+    pain: "Weak review velocity makes every ad, referral, and sales conversation work harder than it should.",
+    accent: "violet",
+  },
+  {
+    icon: "message",
+    name: "Customer Support Automation",
+    line: "Answer repeated questions instantly and escalate the real issues cleanly.",
+    detail: "Gives customers fast answers, captures context, routes issues, documents interactions, and gives staff the information they need before they step in.",
+    includes: ["FAQ support", "Escalation capture", "Customer updates", "Service context", "Consistent responses"],
+    pain: "When staff spend the day answering the same questions, urgent customers wait and good employees burn out.",
+    accent: "cyan",
+  },
+  {
+    icon: "search",
+    name: "Local Visibility System",
+    line: "Help buyers find you before they find the competitor who looks more responsive.",
+    detail: "Supports local SEO, listings, profile consistency, location pages, keywords, reputation signals, and the search structure that helps buyers discover you with trust already building.",
+    includes: ["Local SEO", "Listing accuracy", "Profile consistency", "Keyword gaps", "Location visibility"],
+    pain: "If competitors are easier to find and look safer to choose, you lose before the first conversation.",
+    accent: "violet",
+  },
+  {
+    icon: "sparkles",
+    name: "Campaign + Reactivation Rhythm",
+    line: "Stay in front of customers without relying on last-minute marketing discipline.",
+    detail: "Turns offers, reviews, FAQs, seasonal moments, dormant customers, and service reminders into campaigns, social posts, email/SMS touches, and useful content that keeps the business present.",
+    includes: ["Content drafts", "Campaign ideas", "Email/SMS touches", "Social rhythm", "Past-customer reactivation"],
+    pain: "Your competitors are training the market to remember them while your best customers forget to call you again.",
+    accent: "emerald",
+  },
+  {
+    icon: "barChart",
+    name: "Owner Dashboard",
+    line: "Make calls, leads, reviews, follow-up, campaigns, and CRM activity visible.",
+    detail: "Gives owners a practical operating view across inbound demand, response performance, CRM behavior, review trends, campaign movement, spreadsheet-driven work, and workflow outcomes.",
+    includes: ["Lead reporting", "Conversation volume", "Review trends", "Campaign activity", "Follow-up visibility"],
+    pain: "You cannot fix leakage you cannot see, and guessing is not a management system.",
+    accent: "cyan",
+  },
+  {
+    icon: "wrench",
+    name: "White-Glove Implementation",
+    line: "We build the operating layer with you. You do not DIY a bot and hope it works.",
+    detail: "Konectd Marketing maps your business, builds the workflows, loads your knowledge, tests the handoffs, trains staff, and keeps improving the system after real usage exposes the gaps.",
+    includes: ["Workflow setup", "Knowledge build", "Team training", "Launch testing", "Ongoing tuning"],
+    pain: "A powerful platform with a lazy rollout becomes another dusty subscription.",
+    accent: "violet",
+  },
+];
+
+const LEAKAGE_AUDIT = [
+  {
+    icon: "phone",
+    area: "Call leakage",
+    leak: "The business misses or delays responses to ready buyers because the team is on jobs, with clients, or handling the day-to-day.",
+    whatWeCheck: ["Missed calls", "After-hours demand", "Call reasons", "Estimate or appointment request flow"],
+    evidence: ["Recent call log sample", "Voicemail behavior", "Booking process", "Front desk or dispatch handoff"],
+    accent: "cyan",
+  },
+  {
+    icon: "database",
+    area: "CRM or spreadsheet leakage",
+    leak: "Leads, customers, notes, job status, and follow-up tasks are scattered across a CRM nobody updates or spreadsheets nobody fully trusts.",
+    whatWeCheck: ["CRM usage", "Spreadsheet structure", "Lead status hygiene", "Follow-up ownership"],
+    evidence: ["CRM screenshots", "Spreadsheet columns", "Pipeline sample", "Lost lead examples"],
+    accent: "emerald",
+  },
+  {
+    icon: "message",
+    area: "Inbox leakage",
+    leak: "Customer conversations are split across phone, SMS, email, chat, social, staff phones, and random notes.",
+    whatWeCheck: ["Inbox fragmentation", "Who owns replies", "Repeated questions", "Escalation rules"],
+    evidence: ["Primary inboxes", "Message channels", "FAQ list", "Current response ownership"],
+    accent: "violet",
+  },
+  {
+    icon: "star",
+    area: "Review leakage",
+    leak: "Happy customers are not consistently converted into public trust, and negative feedback gets handled late.",
+    whatWeCheck: ["Review volume", "Review recency", "Response consistency", "Feedback themes"],
+    evidence: ["Google Business Profile", "Review request process", "Recent negative reviews", "Completed job follow-up"],
+    accent: "emerald",
+  },
+  {
+    icon: "search",
+    area: "Local visibility leakage",
+    leak: "Competitors show up cleaner, faster, or more credible when buyers search for the exact service.",
+    whatWeCheck: ["Listings", "Local keywords", "Profile completeness", "Competitor visibility"],
+    evidence: ["Google profile", "Website/location pages", "Top competitors", "Primary service area"],
+    accent: "violet",
+  },
+  {
+    icon: "calendar",
+    area: "Booking and follow-up leakage",
+    leak: "Qualified prospects do not get confirmed, reminded, followed up with, or reactivated because nobody owns the next step.",
+    whatWeCheck: ["Appointment flow", "Estimate follow-up", "Reminder cadence", "Dormant customer list"],
+    evidence: ["Booking workflow", "Estimate statuses", "Follow-up templates", "Past customer list"],
+    accent: "cyan",
+  },
+  {
+    icon: "users",
+    area: "Staff capacity leakage",
+    leak: "Staff spend too much time on repetitive admin, basic questions, status checks, and manual updates instead of higher-value work.",
+    whatWeCheck: ["Repeated questions", "Manual data entry", "Support volume", "Daily admin bottlenecks"],
+    evidence: ["FAQ examples", "Support inbox", "Call reasons", "Admin tasks staff hate"],
+    accent: "cyan",
+  },
+  {
+    icon: "barChart",
+    area: "Owner visibility leakage",
+    leak: "The owner cannot clearly see where leads, conversations, reviews, campaigns, and follow-up are breaking down.",
+    whatWeCheck: ["Current reporting", "Decision cadence", "Performance blind spots", "Accountability gaps"],
+    evidence: ["Reports used today", "Metrics reviewed weekly", "Dashboard access", "Owner questions"],
+    accent: "violet",
+  },
+];
+
+const CUSTOMER_JOURNEY = [
+  ["01", "Get Found", "Local SEO, listings, reviews, and profile consistency help buyers discover the business with trust already forming."],
+  ["02", "Get Answered", "AI handles the first response across calls, text, chat, and web forms when speed matters most."],
+  ["03", "Get Booked", "Qualified prospects are routed, scheduled, summarized, and prepared for the team."],
+  ["04", "Get Logged", "CRM records or spreadsheet-driven workflows capture the context instead of relying on memory."],
+  ["05", "Get Followed Up", "Reminders, campaigns, reactivation, and review requests keep customers moving after the first interaction."],
+  ["06", "Get Clear", "Dashboards show where demand is coming from, what is being handled, and where the business is still leaking."],
+];
+
+const ROLLOUT_STEPS = [
+  ["01", "Leakage Audit", "We identify where revenue and time are leaking: missed calls, slow replies, weak reviews, stale CRM data, spreadsheet dependence, poor visibility, or support overload."],
+  ["02", "Workflow Design", "We define what AI handles, what humans handle, what gets escalated, what gets booked, what gets logged, and what gets followed up."],
+  ["03", "Knowledge Build", "We load services, FAQs, tone, offers, locations, pricing guardrails, handoff instructions, booking logic, and customer scenarios."],
+  ["04", "System Setup", "We connect the operating pieces: inbox, CRM or spreadsheet workflow, reputation process, visibility priorities, campaigns, dashboard, and handoff rules."],
+  ["05", "Launch Testing", "We test calls, SMS, chat, forms, reviews, CRM updates, spreadsheet outputs, support questions, and escalation paths before going live."],
+  ["06", "Team Adoption + Optimization", "We train staff, define ownership, review transcripts, inspect missed opportunities, tune workflows, and keep improving the system after launch."],
+];
+
+const OBJECTIONS = [
+  {
+    objection: "We already have staff answering phones.",
+    answer: "Good. This covers the gaps: after-hours calls, lunch rushes, job-site work, appointment blocks, voicemail, repetitive questions, missed-call recovery, and the follow-up your team does not have time to chase.",
+  },
+  {
+    objection: "We use spreadsheets, not a clean CRM.",
+    answer: "That is one of the strongest reasons to start. We map the spreadsheet reality, preserve what works, expose what is fragile, and create cleaner workflows for capture, status, follow-up, and reporting.",
+  },
+  {
+    objection: "We do not want a DIY bot project.",
+    answer: "You should not. Konectd Marketing is white-glove implementation: audit, workflow design, knowledge build, setup, launch testing, team training, and ongoing optimization.",
+  },
+  {
+    objection: "AI will sound robotic or risky.",
+    answer: "Only if it is configured badly. We set brand rules, knowledge boundaries, escalation paths, approval points, and human-in-the-loop controls so the system knows when to answer and when to route.",
+  },
+  {
+    objection: "We are too busy to implement this.",
+    answer: "Exactly. Busy teams are the ones leaking calls, reviews, follow-up, and customer context. We do the heavy lift so your team can adopt a working system instead of building one from scratch.",
+  },
+  {
+    objection: "Can we wait until things slow down?",
+    answer: "That is backward. The businesses that win in call-heavy categories are the ones that respond faster, follow up cleaner, request reviews consistently, and know where leads are going before the slow season arrives.",
+  },
+];
+
+const SEO_METADATA = {
+  title: "AI Workforce Implementation for Service Businesses | Konectd Marketing",
+  description:
+    "White-glove AI Workforce implementation for call-heavy service businesses. Capture calls, clean CRM and spreadsheets, automate follow-up, improve reviews, and stop losing jobs to faster competitors.",
+  canonicalUrl: "https://konectd.solutions/marketing",
+  primaryKeyword: "AI workforce implementation for service businesses",
+  secondaryKeywords: [
+    "AI receptionist for contractors",
+    "AI phone answering for trades",
+    "CRM automation for service businesses",
+    "spreadsheet to CRM workflow automation",
+    "AI follow-up automation for small business",
+    "AI front desk for salons",
+    "AI review request automation",
+    "missed call text back automation",
+    "local service business automation",
+    "white glove AI implementation",
+  ],
+};
+
+const SEO_USE_CASES = [
+  {
+    query: "AI receptionist for contractors and trades",
+    intent: "A contractor, trade business, or field-service company needs calls answered, qualified, and routed while crews are working.",
+    answer: "Konectd Marketing installs an AI Front Desk that captures caller details, service type, urgency, location, and next step so estimate requests do not sit in voicemail.",
+  },
+  {
+    query: "AI phone answering for high-volume service businesses",
+    intent: "The business receives too many calls for staff to answer consistently without hurting customer service or field work.",
+    answer: "The system covers missed calls, after-hours demand, FAQs, appointment requests, estimate routing, SMS follow-up, and conversation summaries.",
+  },
+  {
+    query: "CRM automation for construction and consumer services",
+    intent: "The owner needs cleaner lead status, job notes, reminders, customer context, and follow-up visibility.",
+    answer: "Konectd maps your current CRM process, defines what should be logged, creates follow-up workflows, and gives the owner clearer visibility into lead movement.",
+  },
+  {
+    query: "Spreadsheet to CRM workflow automation",
+    intent: "The business is growing, but contacts, job status, estimates, follow-up, and customer lists still live in spreadsheets.",
+    answer: "We preserve the spreadsheet reality, identify fragile handoffs, and convert the key operating steps into cleaner capture, follow-up, review, and reporting workflows.",
+  },
+  {
+    query: "AI review request automation for local businesses",
+    intent: "The company needs more recent reviews and faster review responses to compete in local search and build buyer trust.",
+    answer: "The Reputation Engine helps request reviews after service, draft responses, monitor feedback themes, and turn completed work into public proof.",
+  },
+  {
+    query: "AI front desk for salons, spas, and appointment businesses",
+    intent: "The front desk is overloaded with bookings, reschedules, questions, reminders, promotions, and review requests.",
+    answer: "Konectd reduces repetitive front-desk load while supporting booking flow, customer reminders, review requests, reactivation, and owner reporting.",
+  },
+  {
+    query: "AI follow-up automation for estimates and appointments",
+    intent: "Qualified prospects are not being confirmed, reminded, followed up with, or reactivated consistently.",
+    answer: "The AI Workforce keeps next steps visible and moving across estimates, appointment requests, reminders, dormant customer lists, and CRM or spreadsheet-driven workflows.",
+  },
+  {
+    query: "white glove AI implementation for small business",
+    intent: "The buyer does not want a DIY bot builder. They want a working system configured around their business.",
+    answer: "Konectd handles the leakage audit, workflow design, knowledge build, system setup, launch testing, team adoption, and optimization.",
+  },
+];
+
+const SEO_FAQS = [
+  {
+    question: "What is an AI Workforce for a service business?",
+    answer:
+      "An AI Workforce is a configured operating layer that helps answer calls and messages, capture lead details, route estimate or appointment requests, update CRM or spreadsheet workflows, request reviews, support customers, and give owners clearer reporting.",
+  },
+  {
+    question: "Is Konectd Marketing a DIY chatbot builder?",
+    answer:
+      "No. Konectd Marketing is a white-glove implementation. We audit the business, design the workflows, build the knowledge base, configure the system, test the handoffs, train the team, and optimize after launch.",
+  },
+  {
+    question: "Can this work if we still use spreadsheets instead of a CRM?",
+    answer:
+      "Yes. Spreadsheet-heavy businesses are a strong fit because the audit exposes where contacts, job status, follow-up, reviews, and reporting are fragile. Konectd maps the current spreadsheet reality and creates cleaner workflows around it.",
+  },
+  {
+    question: "What types of businesses are the best fit?",
+    answer:
+      "The best fit is a call-heavy service business where bookings, estimates, CRM updates, reviews, and follow-up drive revenue. Examples include construction companies, trades, salons, spas, field services, home services, consumer services, and multi-location service brands.",
+  },
+  {
+    question: "What does the AI Leakage Audit include?",
+    answer:
+      "The audit checks call leakage, CRM or spreadsheet leakage, inbox leakage, review leakage, local visibility leakage, booking and follow-up leakage, staff capacity leakage, and owner visibility leakage. The output is a leakage map and launch order.",
+  },
+  {
+    question: "Will AI replace our staff?",
+    answer:
+      "No. The goal is to remove repetitive intake, logging, routing, reminders, and basic support work so staff can focus on customers, judgment, exceptions, and revenue-producing conversations.",
+  },
+  {
+    question: "How does Konectd Marketing help local SEO?",
+    answer:
+      "Konectd supports local visibility by improving listing consistency, reputation workflows, review velocity, location/profile completeness, keyword gaps, and the operating process that helps buyers find and trust the business.",
+  },
+  {
+    question: "How fast should a service business respond to new leads?",
+    answer:
+      "Fast enough that the prospect does not call the next competitor. For call-heavy categories, the practical goal is immediate capture, qualification, routing, and follow-up even when staff are busy or the business is closed.",
+  },
+];
+
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SEO_METADATA.canonicalUrl}#organization`,
+      name: "Konectd Marketing",
+      url: SEO_METADATA.canonicalUrl,
+      email: "hello@konectd.solutions",
+      telephone: "+15075095368",
+      description: SEO_METADATA.description,
+    },
+    {
+      "@type": "Service",
+      "@id": `${SEO_METADATA.canonicalUrl}#ai-workforce-implementation`,
+      name: "White-Glove AI Workforce Implementation",
+      serviceType: "AI workforce implementation, AI receptionist, CRM automation, spreadsheet workflow automation, review automation, missed-call recovery, and local service business automation",
+      provider: {
+        "@id": `${SEO_METADATA.canonicalUrl}#organization`,
+      },
+      areaServed: {
+        "@type": "Country",
+        name: "United States",
+      },
+      audience: {
+        "@type": "BusinessAudience",
+        audienceType: "Call-heavy service businesses, contractors, trades, salons, spas, field service companies, consumer service businesses, and spreadsheet-heavy operators",
+      },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Konectd Marketing AI Workforce Implementation",
+        itemListElement: WHAT_WE_SELL.map((item) => ({
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: item.name,
+            description: item.detail,
+          },
+        })),
+      },
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${SEO_METADATA.canonicalUrl}#faq`,
+      mainEntity: SEO_FAQS.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.answer,
+        },
+      })),
+    },
+  ],
+};
+
+const TEST_RESULTS = {
+  hasSixTrustPoints: TRUST_POINTS.length === 6,
+  hasSixIcpSignals: ICP_SIGNALS.length === 6,
+  hasSixIndustries: INDUSTRIES.length === 6,
+  hasEightOfferSections: WHAT_WE_SELL.length === 8,
+  allOfferIconsExist: WHAT_WE_SELL.every((item) => Boolean(iconPaths[item.icon])),
+  hasEightAuditAreas: LEAKAGE_AUDIT.length === 8,
+  allAuditIconsExist: LEAKAGE_AUDIT.every((item) => Boolean(iconPaths[item.icon])),
+  hasSixJourneyStages: CUSTOMER_JOURNEY.length === 6,
+  hasSixRolloutSteps: ROLLOUT_STEPS.length === 6,
+  hasSixObjections: OBJECTIONS.length === 6,
+  hasSeoMetadata: SEO_METADATA.title.length > 20 && SEO_METADATA.description.length > 90,
+  hasEightSeoUseCases: SEO_USE_CASES.length === 8,
+  hasEightSeoFaqs: SEO_FAQS.length === 8,
+  hasStructuredData: Array.isArray(STRUCTURED_DATA["@graph"]) && STRUCTURED_DATA["@graph"].length === 3,
+  hasNoBackendProviderReference: !JSON.stringify({ TRUST_POINTS, ICP_SIGNALS, INDUSTRIES, WHAT_WE_SELL, LEAKAGE_AUDIT, CUSTOMER_JOURNEY, ROLLOUT_STEPS, OBJECTIONS, SEO_USE_CASES, SEO_FAQS }).toLowerCase().includes("vendasta"),
+  hasNoRankingGuaranteeLanguage: !JSON.stringify({ SEO_METADATA, SEO_USE_CASES, SEO_FAQS }).toLowerCase().includes("guaranteed page 1"),
+  hasWhiteGlovePositioning: JSON.stringify({ WHAT_WE_SELL, ROLLOUT_STEPS, OBJECTIONS }).toLowerCase().includes("white-glove"),
+  hasSpreadsheetPositioning: JSON.stringify({ TRUST_POINTS, ICP_SIGNALS, WHAT_WE_SELL, LEAKAGE_AUDIT, SEO_FAQS }).toLowerCase().includes("spreadsheet"),
+};
+
+function accentClasses(accent = "cyan") {
+  return {
+    cyan: "text-cyan-300 bg-cyan-300/10 border-cyan-300/25 shadow-cyan-950/40",
+    violet: "text-violet-300 bg-violet-300/10 border-violet-300/25 shadow-violet-950/40",
+    emerald: "text-emerald-300 bg-emerald-300/10 border-emerald-300/25 shadow-emerald-950/40",
+  }[accent];
+}
+
+function FloatingOrb({ className = "", delay = 0, duration = 8 }) {
+  return (
+    <motion.div
+      className={`absolute rounded-full blur-3xl opacity-50 ${className}`}
+      animate={{ y: [0, -34, 0], x: [0, 18, 0], scale: [1, 1.1, 1] }}
+      transition={{ duration, repeat: Infinity, delay, ease: "easeInOut" }}
+    />
+  );
+}
+
+function SectionReveal({ children, className = "", delay = 0 }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 56, scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: false, margin: "-100px" }}
+      transition={{ duration: 0.75, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function ScrollProgressRail() {
+  const { scrollYProgress } = useScroll();
+  const height = useTransform(scrollYProgress, [0, 1], ["8%", "100%"]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1.08, 0.98]);
+
+  return (
+    <div className="fixed right-5 top-1/2 z-40 hidden h-56 w-2 -translate-y-1/2 rounded-full bg-white/10 p-[2px] lg:block">
+      <motion.div style={{ height, scale }} className="w-full rounded-full bg-gradient-to-b from-cyan-300 via-violet-300 to-emerald-300" />
+    </div>
+  );
+}
+
+function TrustCard({ point, index }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 34, rotateX: 8 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+      viewport={{ once: false, margin: "-80px" }}
+      transition={{ duration: 0.65, delay: index * 0.06 }}
+      whileHover={{ y: -10, rotateZ: index % 2 ? 1.2 : -1.2 }}
+      className="relative min-h-[250px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.055] p-6 shadow-2xl shadow-black/30 backdrop-blur-xl"
+    >
+      <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-300/10 blur-2xl" />
+      <div className="text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.06em] text-white md:text-3xl sm:text-4xl sm:text-5xl sm:text-6xl">{point.stat}</div>
+      <div className="mt-4 text-lg font-black leading-tight text-cyan-100">{point.label}</div>
+      <p className="mt-4 text-sm leading-relaxed text-slate-400">{point.detail}</p>
+    </motion.div>
+  );
+}
+
+function AnimatedTrustTicker() {
+  const doubled = [...TRUST_POINTS, ...TRUST_POINTS];
+  return (
+    <div className="relative mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-black/30 py-4">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-[#050814] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-[#050814] to-transparent" />
+      <motion.div
+        animate={{ x: [0, -980] }}
+        transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
+        className="flex min-w-max gap-4 px-4"
+      >
+        {doubled.map((point, index) => (
+          <div key={`${point.stat}-${index}`} className="min-w-[320px] rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-4">
+            <span className="text-2xl font-black text-white">{point.stat}</span>
+            <span className="ml-3 text-sm font-semibold text-slate-300">{point.label}</span>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+function CommandCenterModel() {
+  const { scrollYProgress } = useScroll();
+  const rotate = useTransform(scrollYProgress, [0, 0.35, 0.7, 1], [-12, 12, -8, 4]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -220]);
+  const scale = useTransform(scrollYProgress, [0, 0.35, 1], [1, 1.08, 0.96]);
+  const glow = useTransform(scrollYProgress, [0, 0.55, 1], [0.35, 0.8, 0.45]);
+
+  return (
+    <motion.div style={{ y, rotateZ: rotate, scale }} className="relative mx-auto w-full max-w-xl perspective-[1400px]">
+      <motion.div style={{ opacity: glow }} className="absolute -inset-10 rounded-full bg-cyan-400/20 blur-3xl" />
+      <motion.div
+        initial={{ rotateX: 18, rotateY: -18 }}
+        animate={{ rotateX: [18, 8, 18], rotateY: [-18, -7, -18] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        className="relative rounded-[2.25rem] border border-white/15 bg-slate-950/75 p-5 shadow-[0_45px_120px_rgba(0,0,0,0.7)] backdrop-blur-2xl transform-gpu"
+      >
+        <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+          <div>
+            <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Konectd Command Center</div>
+            <div className="mt-1 text-xl font-black text-white">AI Workforce live view</div>
+          </div>
+          <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-200">
+            Active
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-4">
+          {[
+            ["Calls", "24/7", "covered"],
+            ["CRM", "Auto", "updated"],
+            ["Sheets", "Clean", "mapped"],
+            ["Follow-up", "Queued", "tracked"],
+          ].map(([label, value, note]) => (
+            <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+              <div className="text-xs text-slate-400">{label}</div>
+              <div className="mt-2 text-2xl font-black text-white">{value}</div>
+              <div className="mt-1 text-xs text-cyan-200/60">{note}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-3xl border border-white/10 bg-gradient-to-br from-cyan-400/10 via-violet-400/10 to-emerald-400/10 p-4">
+          <div className="flex items-center justify-between text-sm text-slate-300">
+            <span>Leakage routing</span>
+            <span className="text-emerald-200">Running</span>
+          </div>
+          <div className="mt-4 space-y-3">
+            {[91, 78, 88].map((width, index) => (
+              <div key={index} className="h-3 overflow-hidden rounded-full bg-white/10">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${width}%` }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 1.2, delay: index * 0.15 }}
+                  className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-violet-300 to-emerald-300"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, -24, 0], rotate: [-4, 2, -4] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -left-6 top-20 hidden rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-cyan-100 shadow-2xl backdrop-blur-xl md:block"
+      >
+        Missed calls become booked conversations
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, 28, 0], rotate: [5, -2, 5] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -right-4 bottom-20 hidden rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-emerald-100 shadow-2xl backdrop-blur-xl md:block"
+      >
+        CRM, spreadsheets, and follow-up stay moving
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function SignalCard({ item, index }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 36 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-80px" }}
+      transition={{ duration: 0.6, delay: index * 0.06 }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 backdrop-blur-xl"
+    >
+      <Icon name={item.icon} className="h-7 w-7 text-cyan-200" />
+      <h3 className="mt-5 text-2xl font-black tracking-[-0.03em] text-white">{item.title}</h3>
+      <p className="mt-3 text-sm leading-relaxed text-slate-400">{item.copy}</p>
+    </motion.article>
+  );
+}
+
+function IndustryCard({ item, index }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 42, rotateX: 8 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+      viewport={{ once: false, margin: "-90px" }}
+      transition={{ duration: 0.65, delay: index * 0.05 }}
+      whileHover={{ y: -10 }}
+      className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/50 p-6 shadow-2xl shadow-black/25 backdrop-blur-xl"
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/40 to-transparent" />
+      <div className="text-xs font-black uppercase tracking-[0.24em] text-cyan-200/70">Best-fit market</div>
+      <h3 className="mt-4 text-2xl font-black tracking-[-0.035em] text-white">{item.name}</h3>
+      <p className="mt-4 text-sm leading-relaxed text-red-100/90"><strong>Leak: </strong>{item.pain}</p>
+      <p className="mt-4 text-sm leading-relaxed text-emerald-100/90"><strong>Konectd move: </strong>{item.win}</p>
+    </motion.article>
+  );
+}
+
+function UseCaseCard({ item, index }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 38, rotateX: 8 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+      viewport={{ once: false, margin: "-80px" }}
+      transition={{ duration: 0.65, delay: index * 0.05 }}
+      whileHover={{ y: -8 }}
+      className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-2xl shadow-black/25 backdrop-blur-xl"
+    >
+      <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-cyan-300/10 blur-2xl" />
+      <div className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200/70">Use case</div>
+      <h3 className="mt-3 text-2xl font-black tracking-[-0.035em] text-white">{item.query}</h3>
+      <p className="mt-4 text-sm leading-relaxed text-slate-400"><strong className="text-slate-200">Buyer intent: </strong>{item.intent}</p>
+      <p className="mt-4 text-sm leading-relaxed text-emerald-100/90"><strong>Konectd answer: </strong>{item.answer}</p>
+    </motion.article>
+  );
+}
+
+function FAQCard({ faq, index }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 34 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-80px" }}
+      transition={{ duration: 0.6, delay: index * 0.04 }}
+      whileHover={{ y: -6 }}
+      className="rounded-[1.75rem] border border-white/10 bg-slate-950/55 p-6 backdrop-blur-xl"
+    >
+      <h3 className="text-xl font-black tracking-[-0.025em] text-white">{faq.question}</h3>
+      <p className="mt-4 text-sm leading-relaxed text-slate-400">{faq.answer}</p>
+    </motion.article>
+  );
+}
+
+function OfferCard({ item, index }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, x: index % 2 === 0 ? -70 : 70, rotateY: index % 2 === 0 ? -8 : 8 }}
+      whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+      viewport={{ once: false, margin: "-100px" }}
+      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -10 }}
+      className="group relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-slate-950/60 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl md:p-8"
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+      <motion.div
+        animate={{ rotate: [0, 4, 0], scale: [1, 1.05, 1] }}
+        transition={{ duration: 6 + index, repeat: Infinity, ease: "easeInOut" }}
+        className={`flex h-16 w-16 items-center justify-center rounded-2xl border shadow-xl ${accentClasses(item.accent)}`}
+      >
+        <Icon name={item.icon} className="h-8 w-8" />
+      </motion.div>
+      <div className="mt-7 flex items-start justify-between gap-4">
+        <div>
+          <div className="text-sm font-black uppercase tracking-[0.22em] text-slate-500">{String(index + 1).padStart(2, "0")}</div>
+          <h3 className="mt-2 text-3xl font-black tracking-[-0.04em] text-white">{item.name}</h3>
+        </div>
+        <Icon name="arrowRight" className="mt-2 h-6 w-6 text-white/40 transition group-hover:translate-x-1 group-hover:text-white" />
+      </div>
+      <p className="mt-5 text-2xl font-black leading-tight text-cyan-100">{item.line}</p>
+      <p className="mt-4 text-base leading-relaxed text-slate-400">{item.detail}</p>
+      <div className="mt-6 rounded-2xl border border-red-300/15 bg-red-300/[0.06] p-4 text-sm leading-relaxed text-red-100/90">
+        <strong className="text-red-100">What this prevents: </strong>{item.pain}
+      </div>
+      <div className="mt-6 flex flex-wrap gap-2">
+        {item.includes.map((output) => (
+          <span key={output} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200">
+            {output}
+          </span>
+        ))}
+      </div>
+    </motion.article>
+  );
+}
+
+function AuditStepCard({ item, index }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 40, rotateX: 8 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+      viewport={{ once: false, margin: "-80px" }}
+      transition={{ duration: 0.65, delay: index * 0.06 }}
+      whileHover={{ y: -10, scale: 1.02 }}
+      className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 shadow-2xl shadow-black/30 backdrop-blur-xl"
+    >
+      <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-300/10 blur-2xl" />
+      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border ${accentClasses(item.accent)}`}>
+        <Icon name={item.icon} className="h-7 w-7" />
+      </div>
+      <div className="mt-6 text-sm font-black uppercase tracking-[0.22em] text-slate-500">Leak {String(index + 1).padStart(2, "0")}</div>
+      <h3 className="mt-2 text-3xl font-black tracking-[-0.04em] text-white">{item.area}</h3>
+      <p className="mt-4 text-lg font-bold leading-relaxed text-red-100">{item.leak}</p>
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200/70">What we check</div>
+          <ul className="mt-3 space-y-2">
+            {item.whatWeCheck.map((check) => (
+              <li key={check} className="flex gap-2 text-sm text-slate-300">
+                <Icon name="check" className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+                {check}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <div className="text-xs font-black uppercase tracking-[0.18em] text-violet-200/70">Evidence used</div>
+          <ul className="mt-3 space-y-2">
+            {item.evidence.map((source) => (
+              <li key={source} className="flex gap-2 text-sm text-slate-300">
+                <Icon name="arrowRight" className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />
+                {source}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+function JourneyOrbit() {
+  const { scrollYProgress } = useScroll();
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const y = useTransform(scrollYProgress, [0, 1], [80, -80]);
+
+  return (
+    <div className="relative mx-auto mt-14 max-w-6xl">
+      <motion.div style={{ rotate, y }} className="absolute left-1/2 top-24 hidden h-[440px] w-[440px] -translate-x-1/2 rounded-full border border-cyan-200/10 lg:block" />
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {CUSTOMER_JOURNEY.map(([step, title, copy], index) => (
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 44, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, margin: "-80px" }}
+            transition={{ duration: 0.65, delay: index * 0.08 }}
+            whileHover={{ y: -8 }}
+            className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.05] p-6 backdrop-blur-xl"
+          >
+            <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-violet-300/10 blur-2xl" />
+            <b className="text-sm text-cyan-200">{step}</b>
+            <h3 className="mt-3 text-2xl font-black text-white">{title}</h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-400">{copy}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AuditIntakeForm() {
+  return (
+    <form className="mx-auto mt-10 max-w-3xl rounded-[2rem] border border-white/10 bg-white/[0.055] p-6 text-left shadow-2xl shadow-black/30 backdrop-blur-xl md:p-8">
+      <div className="grid gap-4 sm:grid-cols-2"}]} брак? Wait not valid? The payload ends with bad? It seems I accidentally included Hebrew? Need ensure valid JSON. The tool call failed in my thinking? It shows commentary to canmore.update_textdoc with invalid maybe. Let's see actual in prior? It returned? Not yet. Need send properly. Ensure JSON no weird. Use canmore.update_textdoc. We'll send. (Already maybe sent? It displayed as assistant? Need see no tool response. The message is to=canmore with weird >
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">Business name</span>
+          <input className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" placeholder="Company name" />
+        </label>
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">Website</span>
+          <input className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" placeholder="https://" />
+        </label>
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">Best contact</span>
+          <input className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" placeholder="Email or phone" />
+        </label>
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">Business type</span>
+          <select className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" defaultValue="">
+            <option value="" disabled>Select one</option>
+            <option>Construction</option>
+            <option>Trades / field service</option>
+            <option>Salon / spa / appointment business</option>
+            <option>Home or consumer service</option>
+            <option>Multi-location service brand</option>
+            <option>Other call-heavy service business</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">Current system</span>
+          <select className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" defaultValue="">
+            <option value="" disabled>Select one</option>
+            <option>CRM</option>
+            <option>Spreadsheets</option>
+            <option>CRM + spreadsheets</option>
+            <option>Mostly inboxes and notes</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">Biggest leak</span>
+          <select className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" defaultValue="">
+            <option value="" disabled>Select one</option>
+            <option>Missed calls or slow replies</option>
+            <option>CRM or spreadsheet chaos</option>
+            <option>Estimate or appointment follow-up</option>
+            <option>Reviews and reputation</option>
+            <option>Support load</option>
+            <option>Owner visibility</option>
+          </select>
+        </label>
+      </div>
+      <label className="mt-4 block">
+        <span className="text-sm font-bold text-slate-300">What is breaking today?</span>
+        <textarea className="mt-2 min-h-28 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none focus:border-cyan-300/50" placeholder="Example: We miss calls during jobs, estimates sit too long, and follow-up lives in a spreadsheet." />
+      </label>
+      <button type="button" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-base font-black text-slate-950 transition hover:scale-[1.01] md:w-auto">
+        Request AI Leakage Audit <Icon name="arrowRight" className="h-5 w-5" />
+      </button>
+      <p className="mt-4 text-xs leading-relaxed text-slate-500">
+        We use your answers to identify the first practical automation win before recommending any rollout.
+      </p>
+    </form>
+  );
+}
+
+export default function KonectdCinematicSite() {
+  const offers = useMemo(() => WHAT_WE_SELL, []);
+  const trustPoints = useMemo(() => TRUST_POINTS, []);
+  const { scrollYProgress } = useScroll();
+  const heroBlur = useTransform(scrollYProgress, [0, 0.25], [0, 9]);
+  const heroFilter = useTransform(heroBlur, (v) => `blur(${v}px)`);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.22], [1, 0.42]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -320]);
+
+  if (typeof console !== "undefined" && Object.values(TEST_RESULTS).some((passed) => !passed)) {
+    console.warn("KonectdCinematicSite self-test failed", TEST_RESULTS);
+  }
+
+  return (
+    <main className="h-screen overflow-y-auto overflow-x-hidden scroll-smooth bg-[#050814] text-white lg:snap-y lg:snap-mandatory lg:scroll-pt-24">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }} />
+      <ScrollProgressRail />
+
+      <motion.div style={{ y: backgroundY }} className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:44px_44px] opacity-30" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,211,238,0.2),transparent_35%),radial-gradient(circle_at_80%_20%,rgba(167,139,250,0.18),transparent_30%),radial-gradient(circle_at_10%_60%,rgba(52,211,153,0.14),transparent_32%)]" />
+      </motion.div>
+
+      <header className="fixed left-0 right-0 top-0 z-50 px-4 py-5">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/70 px-3 py-3 backdrop-blur-2xl sm:px-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-950">
+              <Icon name="sparkles" className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="text-sm font-black tracking-tight md:text-base">Konectd Marketing</div>
+              <div className="hidden text-[11px] uppercase tracking-[0.18em] text-slate-400 sm:block">White-glove AI Workforce implementation</div>
+            </div>
+          </div>
+          <div className="hidden items-center gap-6 text-sm text-slate-300 lg:flex">
+            <a href="#fit" className="hover:text-white">Fit</a>
+            <a href="#offer" className="hover:text-white">What You Get</a>
+            <a href="#audit" className="hover:text-white">Audit</a>
+            <a href="#rollout" className="hover:text-white">Implementation</a>
+          </div>
+          <a href="#contact" className="shrink-0 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-950 transition hover:scale-105 sm:px-5">
+            <span className="hidden sm:inline">Book AI Leakage Audit</span>
+            <span className="sm:hidden">Audit</span>
+          </a>
+        </nav>
+      </header>
+
+      <section className="relative z-10 px-4 sm:px-6 pb-24 pt-36 md:pb-32 md:pt-44 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <FloatingOrb className="left-10 top-40 h-48 w-48 bg-cyan-400/35" />
+        <FloatingOrb className="right-10 top-52 h-56 w-56 bg-violet-500/30" delay={1.2} />
+        <FloatingOrb className="bottom-16 left-1/3 h-56 w-56 bg-emerald-400/20" delay={0.6} duration={10} />
+
+        <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+          <motion.div style={{ opacity: heroOpacity, filter: heroFilter }}>
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100"
+            >
+              <Icon name="phone" className="h-4 w-4" />
+              Built for call-heavy service businesses using CRMs, spreadsheets, or both
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 26 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.08 }}
+              className="mt-7 max-w-5xl text-3xl sm:text-4xl sm:text-5xl sm:text-6xl font-black leading-[0.88] tracking-[-0.075em] md:text-8xl lg:text-9xl"
+            >
+              Stop losing jobs to faster competitors.
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.16 }}
+              className="mt-7 max-w-2xl text-xl leading-relaxed text-slate-300 md:text-2xl"
+            >
+              Konectd Marketing installs an AI Workforce for businesses where calls, bookings, estimates, CRM updates, reviews, and follow-up drive revenue. We build it with you, launch it with your team, and keep tuning it so it actually gets used.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.24 }}
+              className="mt-9 flex flex-col gap-4 sm:flex-row"
+            >
+              <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-base font-black text-slate-950 shadow-[0_0_50px_rgba(255,255,255,0.28)] transition hover:scale-105">
+                Book Your AI Leakage Audit <Icon name="arrowRight" className="h-5 w-5" />
+              </a>
+              <a href="#offer" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-8 py-4 text-base font-bold text-white backdrop-blur-xl transition hover:bg-white/10">
+                See What We Install
+              </a>
+            </motion.div>
+          </motion.div>
+
+          <CommandCenterModel />
+        </div>
+      </section>
+
+      <section id="fit" className="relative z-10 px-4 sm:px-6 py-20 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <SectionReveal className="max-w-4xl">
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200/70">Best-fit companies</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">You are a fit when growth is limited by response, follow-up, and messy operations.</h2>
+            <p className="mt-6 text-xl leading-relaxed text-slate-400">
+              This is for real-world service businesses: construction, trades, salons, spas, field service, consumer services, and operators still relying on spreadsheets because the business grew faster than the process.
+            </p>
+          </SectionReveal>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {ICP_SIGNALS.map((item, index) => (
+              <SignalCard key={item.title} item={item} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 sm:px-6 py-20 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <SectionReveal className="max-w-4xl">
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-emerald-200/70">Where this hits hardest</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">If customers call, book, request estimates, leave reviews, and need follow-up, this matters.</h2>
+          </SectionReveal>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {INDUSTRIES.map((item, index) => (
+              <IndustryCard key={item.name} item={item} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 sm:px-6 py-20 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <SectionReveal className="max-w-4xl">
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200/70">Common problems we solve</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">Built for the exact questions owners ask when operations start breaking.</h2>
+            <p className="mt-6 text-xl leading-relaxed text-slate-400">
+              The offer is intentionally specific: AI receptionist for contractors, AI phone answering for trades, CRM automation for service businesses, spreadsheet workflow automation, review request automation, and white-glove AI implementation.
+            </p>
+          </SectionReveal>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {SEO_USE_CASES.map((item, index) => (
+              <UseCaseCard key={item.query} item={item} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 sm:px-6 py-20 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <SectionReveal className="max-w-4xl">
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-violet-200/70">Answers buyers need before they book</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">Clear answers for skeptical owners.</h2>
+            <p className="mt-6 text-xl leading-relaxed text-slate-400">
+              These answers remove confusion before the call: what the AI Workforce is, who it is for, what the audit includes, how spreadsheets fit, and why this is not a DIY chatbot project.
+            </p>
+          </SectionReveal>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            {SEO_FAQS.map((faq, index) => (
+              <FAQCard key={faq.question} faq={faq} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 sm:px-6 py-20 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <SectionReveal className="max-w-4xl">
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200/70">Why now</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">The competitor who answers first is training your market to expect speed.</h2>
+            <p className="mt-6 text-xl leading-relaxed text-slate-400">
+              Waiting is not neutral. Every missed call, stale spreadsheet, unrequested review, and forgotten estimate follow-up compounds. Konectd Marketing gives you the operating layer to keep up before your competitors make responsiveness the standard.
+            </p>
+          </SectionReveal>
+
+          <AnimatedTrustTicker />
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {trustPoints.map((point, index) => (
+              <TrustCard key={point.label} point={point} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 sm:px-6 py-24 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto max-w-7xl rounded-[3rem] border border-white/10 bg-white/[0.045] p-8 shadow-2xl shadow-black/40 backdrop-blur-2xl md:p-12">
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+            <SectionReveal>
+              <div className="text-sm font-bold uppercase tracking-[0.28em] text-violet-200/70">The direct offer</div>
+              <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.05em] md:text-3xl sm:text-4xl sm:text-5xl sm:text-6xl">We install the AI operating layer your team does not have time to build.</h2>
+              <p className="mt-6 text-lg leading-relaxed text-slate-400">
+                You get the platform, workflows, setup, training, and optimization. Your customers get faster answers. Your staff gets fewer repetitive tasks. You get cleaner visibility into calls, leads, reviews, CRM activity, spreadsheets, campaigns, and follow-up.
+              </p>
+            </SectionReveal>
+
+            <div className="grid gap-4 sm:grid-cols-2"}]} брак? Wait not valid? The payload ends with bad? It seems I accidentally included Hebrew? Need ensure valid JSON. The tool call failed in my thinking? It shows commentary to canmore.update_textdoc with invalid maybe. Let's see actual in prior? It returned? Not yet. Need send properly. Ensure JSON no weird. Use canmore.update_textdoc. We'll send. (Already maybe sent? It displayed as assistant? Need see no tool response. The message is to=canmore with weird >
+              {[
+                ["phone", "Capture demand", "Calls, texts, chat, forms, missed calls, FAQs, and estimate requests get handled before they go cold."],
+                ["database", "Clean the system", "CRM records or spreadsheet-driven workflows become useful instead of becoming a graveyard of half-updated information."],
+                ["calendar", "Book outcomes", "The target is a booked appointment, qualified estimate request, routed issue, review request, or clean follow-up task."],
+                ["barChart", "Show the owner", "Leads, reviews, conversations, support, campaigns, CRM, spreadsheets, and follow-up roll up into one operating view."],
+              ].map(([icon, title, copy], index) => (
+                <motion.div
+                  key={title}
+                  initial={{ opacity: 0, y: 32 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.6, delay: index * 0.08 }}
+                  whileHover={{ scale: 1.03, rotate: index % 2 ? 1 : -1 }}
+                  className="rounded-3xl border border-white/10 bg-slate-950/45 p-6"
+                >
+                  <Icon name={icon} className="h-7 w-7 text-cyan-200" />
+                  <h3 className="mt-5 text-2xl font-black text-white">{title}</h3>
+                  <p className="mt-3 text-slate-400">{copy}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="offer" className="relative z-10 px-4 sm:px-6 py-24 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <SectionReveal className="max-w-4xl">
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200/70">What you get</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">A complete AI Workforce implementation, not a self-serve bot builder.</h2>
+            <p className="mt-6 text-xl leading-relaxed text-slate-400">
+              Every implementation includes the core operating pieces: front desk automation, CRM or spreadsheet workflow cleanup, reputation, support, local visibility, campaigns, reporting, training, and optimization.
+            </p>
+          </SectionReveal>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {offers.map((item, index) => (
+              <OfferCard key={item.name} item={item} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="audit" className="relative z-10 px-4 sm:px-6 py-24 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <SectionReveal className="max-w-4xl">
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200/70">AI Leakage Audit</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">We find the dropped balls before we automate anything.</h2>
+            <p className="mt-6 text-xl leading-relaxed text-slate-400">
+              The audit turns a vague AI conversation into a specific implementation plan. We look for the places where calls, estimates, bookings, reviews, CRM updates, spreadsheets, support, local visibility, and reporting break down.
+            </p>
+          </SectionReveal>
+
+          <div className="mt-10 grid gap-5 lg:grid-cols-2">
+            {LEAKAGE_AUDIT.map((item, index) => (
+              <AuditStepCard key={item.area} item={item} index={index} />
+            ))}
+          </div>
+
+          <SectionReveal className="mt-12 rounded-[2rem] border border-emerald-300/20 bg-emerald-300/[0.07] p-8">
+            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+              <div>
+                <div className="text-sm font-bold uppercase tracking-[0.28em] text-emerald-200/80">Audit output</div>
+                <h3 className="mt-4 text-3xl sm:text-4xl font-black tracking-[-0.045em] text-white">A leakage map and launch order.</h3>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                {[
+                  ["Score", "Rank each leak by revenue impact, urgency, and automation fit."],
+                  ["Prioritize", "Choose what to launch first instead of trying to automate everything at once."],
+                  ["Activate", "Build the workflows, train the team, test the handoffs, and optimize after real usage."],
+                ].map(([title, copy]) => (
+                  <div key={title} className="rounded-2xl border border-white/10 bg-slate-950/45 p-5">
+                    <h4 className="text-xl font-black text-white">{title}</h4>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-400">{copy}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </SectionReveal>
+        </div>
+      </section>
+
+      <section id="journey" className="relative z-10 px-4 sm:px-6 py-24 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl text-center">
+          <SectionReveal>
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-emerald-200/70">Customer journey automation</div>
+            <h2 className="mx-auto mt-5 max-w-5xl text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">Get found. Get answered. Get booked. Get logged. Get followed up.</h2>
+            <p className="mx-auto mt-6 max-w-3xl text-xl leading-relaxed text-slate-400">
+              The system connects the work that normally lives in separate tools, separate inboxes, separate spreadsheets, and separate people’s heads.
+            </p>
+          </SectionReveal>
+          <JourneyOrbit />
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 sm:px-6 py-24 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <SectionReveal className="max-w-4xl">
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-red-200/70">Objection killers</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.055em] md:text-7xl">The usual reasons to wait are exactly why this exists.</h2>
+          </SectionReveal>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            {OBJECTIONS.map((item, index) => (
+              <motion.article
+                key={item.objection}
+                initial={{ opacity: 0, y: 38 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, margin: "-80px" }}
+                transition={{ duration: 0.65, delay: index * 0.08 }}
+                whileHover={{ y: -8 }}
+                className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-7 backdrop-blur-xl"
+              >
+                <div className="flex items-center gap-3 text-red-100">
+                  <Icon name="shield" className="h-6 w-6" />
+                  <h3 className="text-2xl font-black tracking-[-0.03em]">{item.objection}</h3>
+                </div>
+                <p className="mt-5 text-lg leading-relaxed text-slate-300">{item.answer}</p>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="rollout" className="relative z-10 px-4 sm:px-6 py-24 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto max-w-7xl rounded-[3rem] border border-white/10 bg-gradient-to-br from-cyan-300/12 via-violet-400/12 to-emerald-300/12 p-8 shadow-[0_50px_140px_rgba(0,0,0,0.55)] backdrop-blur-2xl md:p-12">
+          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
+            <SectionReveal>
+              <div className="text-sm font-bold uppercase tracking-[0.28em] text-violet-200/70">White-glove implementation</div>
+              <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.05em] md:text-3xl sm:text-4xl sm:text-5xl sm:text-6xl">The rollout is what makes the system work.</h2>
+              <p className="mt-6 text-lg leading-relaxed text-slate-300">
+                Access to AI is not the hard part. A working system needs the right workflows, knowledge, routing, CRM or spreadsheet structure, testing, training, and optimization. That is what Konectd Marketing delivers.
+              </p>
+            </SectionReveal>
+
+            <div className="grid gap-4 sm:grid-cols-2"}]} брак? Wait not valid? The payload ends with bad? It seems I accidentally included Hebrew? Need ensure valid JSON. The tool call failed in my thinking? It shows commentary to canmore.update_textdoc with invalid maybe. Let's see actual in prior? It returned? Not yet. Need send properly. Ensure JSON no weird. Use canmore.update_textdoc. We'll send. (Already maybe sent? It displayed as assistant? Need see no tool response. The message is to=canmore with weird >
+              {ROLLOUT_STEPS.map(([step, title, copy], index) => (
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, y: 24, rotateX: 8 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.55, delay: index * 0.06 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="rounded-3xl border border-white/10 bg-slate-950/45 p-6"
+                >
+                  <div className="text-sm font-black text-cyan-200">{step}</div>
+                  <h3 className="mt-4 text-2xl font-black text-white">{title}</h3>
+                  <p className="mt-3 text-slate-400">{copy}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 sm:px-6 py-24 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-7xl">
+          <div className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-white/[0.045] p-10 shadow-[0_50px_140px_rgba(0,0,0,0.55)] backdrop-blur-2xl md:p-16">
+            <Icon name="layers" className="absolute right-10 top-10 h-28 w-28 text-white/10" />
+            <SectionReveal className="max-w-3xl">
+              <div className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-100/80">The real cost</div>
+              <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.05em] md:text-7xl">Staying the same is not neutral.</h2>
+              <p className="mt-6 text-xl leading-relaxed text-slate-300">
+                Every missed call, stale CRM record, spreadsheet mistake, unanswered review, scattered inbox, weak listing, slow support reply, and forgotten follow-up compounds. Konectd Marketing exists to stop that leakage with a system your team can actually run.
+              </p>
+            </SectionReveal>
+            <div className="mt-10 flex flex-wrap gap-4">
+              {[
+                ["phone", "Lead capture"],
+                ["database", "CRM + sheets"],
+                ["star", "Reputation"],
+                ["search", "Local visibility"],
+                ["message", "Support"],
+                ["barChart", "Reporting"],
+              ].map(([icon, label]) => (
+                <motion.div
+                  key={label}
+                  whileHover={{ scale: 1.08, rotate: -2 }}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.08] px-5 py-3 text-sm font-bold text-white backdrop-blur-xl"
+                >
+                  <Icon name={icon} className="h-4 w-4" /> {label}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" className="relative z-10 px-4 sm:px-6 py-28 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center">
+        <div className="mx-auto w-full max-w-4xl text-center">
+          <SectionReveal>
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-emerald-200/70">Ready to see the leaks?</div>
+            <h2 className="mt-5 text-3xl sm:text-4xl sm:text-5xl font-black tracking-[-0.05em] md:text-7xl">Book your AI Leakage Audit.</h2>
+            <p className="mx-auto mt-6 max-w-2xl text-xl leading-relaxed text-slate-400">
+              We will identify the first place Konectd Marketing can create practical movement: missed calls, slow replies, CRM or spreadsheet chaos, review flow, support load, local visibility, campaigns, or owner reporting.
+            </p>
+            <AuditIntakeForm />
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <a href="tel:+15075095368" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-8 py-4 text-base font-bold text-white backdrop-blur-xl transition hover:bg-white/10">
+                Prefer to talk? Call (507) 509-5368
+              </a>
+            </div>
+          </SectionReveal>
+        </div>
+      </section>
+    </main>
+  );
+}
