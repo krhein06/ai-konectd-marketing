@@ -1,1179 +1,510 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+import React, { useMemo } from "react";
+import { motion } from "framer-motion";
 
-  <title>AI Workforce Implementation for Service Businesses | Konectd Marketing</title>
-  <meta
-    name="description"
-    content="White-glove AI Workforce implementation for call-heavy service businesses. Capture calls, clean CRM and spreadsheets, automate follow-up, improve reviews, and stop losing jobs to faster competitors."
-  />
-  <link rel="canonical" href="https://konectd.solutions/marketing" />
+const iconPaths = {
+  arrowRight: "M5 12h14M13 5l7 7-7 7",
+  phone: "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z",
+  database: "M12 3c5 0 9 1.3 9 3s-4 3-9 3-9-1.3-9-3 4-3 9-3ZM3 6v6c0 1.7 4 3 9 3s9-1.3 9-3V6M3 12v6c0 1.7 4 3 9 3s9-1.3 9-3v-6",
+  calendar: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z",
+  star: "M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1L12 2Z",
+  message: "M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z",
+  search: "M21 21l-4.4-4.4M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z",
+  barChart: "M4 19V5M4 19h16M8 17v-6M13 17V7M18 17v-9",
+  wrench: "M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5l-2.6 2.6-2.4-2.4 2.6-2.6Z",
+  check: "M20 6 9 17l-5-5",
+  sparkles: "M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z",
+  shield: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10ZM9 12l2 2 4-5",
+};
 
-  <meta property="og:title" content="AI Workforce Implementation for Service Businesses | Konectd Marketing" />
-  <meta
-    property="og:description"
-    content="Konectd Marketing installs AI Workforce systems for call-heavy service businesses using CRMs, spreadsheets, or both."
-  />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://konectd.solutions/marketing" />
-  <meta property="og:image" content="https://konectd.solutions/og-image.jpg" />
+function Icon({ name, className = "h-5 w-5" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={iconPaths[name]} />
+    </svg>
+  );
+}
 
-  <meta name="theme-color" content="#050814" />
+const SEO_METADATA = {
+  title: "AI Front Desk and CRM for Service Businesses | Konectd Marketing",
+  description:
+    "Konectd Marketing gives service businesses an AI-powered front desk, CRM, follow-up system, review engine, and white-glove setup so they stop missing calls and losing jobs.",
+  canonicalUrl: "https://konectd.solutions/marketing",
+};
 
-  <script type="application/ld+json">
+const PROBLEMS = [
   {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://konectd.solutions/marketing#organization",
-        "name": "Konectd Marketing",
-        "url": "https://konectd.solutions/marketing",
-        "email": "hello@konectd.solutions",
-        "telephone": "+15075095368",
-        "description": "White-glove AI Workforce implementation for call-heavy service businesses."
+    icon: "phone",
+    title: "Missed calls cost jobs",
+    copy: "Customers do not wait. If your team misses the call, they often call the next company.",
+  },
+  {
+    icon: "database",
+    title: "Spreadsheets break as you grow",
+    copy: "Spreadsheets are fine at first. Then follow-ups, notes, estimates, and customer history get messy fast.",
+  },
+  {
+    icon: "calendar",
+    title: "Follow-up gets forgotten",
+    copy: "Leads go cold when nobody owns the next step after the first call, estimate, or appointment request.",
+  },
+];
+
+const WHAT_YOU_GET = [
+  {
+    icon: "phone",
+    title: "AI Front Desk",
+    plain: "Answers calls, texts, chats, and forms so new customers get a fast response.",
+    details: ["Missed-call text-back", "After-hours response", "Lead questions", "Service and estimate requests"],
+  },
+  {
+    icon: "database",
+    title: "CRM Included",
+    plain: "We give you a CRM so your customer info, jobs, notes, and follow-ups stop living in spreadsheets.",
+    details: ["Contact records", "Lead status", "Job or appointment notes", "Follow-up tasks"],
+  },
+  {
+    icon: "calendar",
+    title: "Booking and Follow-Up",
+    plain: "The system helps book the next step and reminds your team what needs attention.",
+    details: ["Appointment requests", "Estimate follow-up", "Reminders", "Reactivation"],
+  },
+  {
+    icon: "star",
+    title: "Review Requests",
+    plain: "Happy customers are asked for reviews so your business looks stronger when people search.",
+    details: ["Review requests", "Response drafts", "Feedback tracking", "Trust building"],
+  },
+  {
+    icon: "message",
+    title: "Customer Support Help",
+    plain: "Common questions get answered faster, and real issues get sent to the right person.",
+    details: ["FAQs", "Escalation", "Customer updates", "Clean handoffs"],
+  },
+  {
+    icon: "barChart",
+    title: "Owner Dashboard",
+    plain: "You can see calls, leads, follow-ups, reviews, and what is being missed.",
+    details: ["Lead reporting", "CRM activity", "Review trends", "Follow-up visibility"],
+  },
+];
+
+const INDUSTRIES = [
+  "Construction",
+  "HVAC",
+  "Plumbing",
+  "Electrical",
+  "Roofing",
+  "Landscaping",
+  "Cleaning",
+  "Pest control",
+  "Salons and spas",
+  "Auto repair",
+  "Pet services",
+  "Home services",
+];
+
+const STEPS = [
+  {
+    title: "We find what is being missed",
+    copy: "We look at calls, forms, texts, follow-up, reviews, and how your team tracks customers today.",
+  },
+  {
+    title: "We set up your CRM",
+    copy: "We move the process away from spreadsheets and into a cleaner system your team can actually use.",
+  },
+  {
+    title: "We build the AI workflows",
+    copy: "We teach the system your services, questions, handoffs, booking rules, and follow-up steps.",
+  },
+  {
+    title: "We train your team",
+    copy: "Your team learns where leads go, what AI handles, when humans step in, and how to use the CRM.",
+  },
+  {
+    title: "We keep improving it",
+    copy: "After launch, we review what is working, what is breaking, and what should be tuned next.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "Do we have to keep using spreadsheets?",
+    a: "No. The goal is to get you away from spreadsheets. Konectd includes a CRM so customer details, lead status, notes, and follow-ups live in one place.",
+  },
+  {
+    q: "Is this just a chatbot?",
+    a: "No. This is a full AI front desk and CRM system with white-glove setup. We build the workflows, train your team, and keep tuning it.",
+  },
+  {
+    q: "Will this replace our staff?",
+    a: "No. It helps your staff by handling repetitive work, capturing details, and reminding the team what needs follow-up.",
+  },
+  {
+    q: "Who is this best for?",
+    a: "Service businesses that get a lot of calls, book appointments, give estimates, need reviews, and depend on follow-up to win jobs.",
+  },
+];
+
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SEO_METADATA.canonicalUrl}#organization`,
+      name: "Konectd Marketing",
+      url: SEO_METADATA.canonicalUrl,
+      email: "hello@konectd.solutions",
+      telephone: "+15075095368",
+      description: SEO_METADATA.description,
+    },
+    {
+      "@type": "Service",
+      "@id": `${SEO_METADATA.canonicalUrl}#service`,
+      name: "AI Front Desk and CRM Implementation",
+      serviceType: "AI front desk, CRM setup, missed call text back, lead follow-up automation, review requests, and white-glove implementation",
+      provider: { "@id": `${SEO_METADATA.canonicalUrl}#organization` },
+      audience: {
+        "@type": "BusinessAudience",
+        audienceType: "Call-heavy service businesses moving away from spreadsheets",
       },
-      {
-        "@type": "Service",
-        "@id": "https://konectd.solutions/marketing#ai-workforce-implementation",
-        "name": "White-Glove AI Workforce Implementation",
-        "serviceType": "AI workforce implementation, AI receptionist, CRM automation, spreadsheet workflow automation, review automation, missed-call recovery, and local service business automation",
-        "provider": {
-          "@id": "https://konectd.solutions/marketing#organization"
-        },
-        "areaServed": {
-          "@type": "Country",
-          "name": "United States"
-        },
-        "audience": {
-          "@type": "BusinessAudience",
-          "audienceType": "Call-heavy service businesses, contractors, trades, salons, spas, field service companies, consumer service businesses, and spreadsheet-heavy operators"
-        }
-      },
-      {
-        "@type": "FAQPage",
-        "@id": "https://konectd.solutions/marketing#faq",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is an AI Workforce for a service business?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "An AI Workforce is a configured operating layer that helps answer calls and messages, capture lead details, route estimate or appointment requests, update CRM or spreadsheet workflows, request reviews, support customers, and give owners clearer reporting."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is Konectd Marketing a DIY chatbot builder?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. Konectd Marketing is a white-glove implementation. We audit the business, design the workflows, build the knowledge base, configure the system, test the handoffs, train the team, and optimize after launch."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can this work if we still use spreadsheets instead of a CRM?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Spreadsheet-heavy businesses are a strong fit because the audit exposes where contacts, job status, follow-up, reviews, and reporting are fragile. Konectd maps the current spreadsheet reality and creates cleaner workflows around it."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What types of businesses are the best fit?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The best fit is a call-heavy service business where bookings, estimates, CRM updates, reviews, and follow-up drive revenue. Examples include construction companies, trades, salons, spas, field services, home services, consumer services, and multi-location service brands."
-            }
-          }
-        ]
-      }
-    ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${SEO_METADATA.canonicalUrl}#faq`,
+      mainEntity: FAQS.map((faq) => ({
+        "@type": "Question",
+        name: faq.q,
+        acceptedAnswer: { "@type": "Answer", text: faq.a },
+      })),
+    },
+  ],
+};
+
+const TEST_RESULTS = {
+  hasSixOffers: WHAT_YOU_GET.length === 6,
+  hasFiveSteps: STEPS.length === 5,
+  hasNoVendorReference: !JSON.stringify({ PROBLEMS, WHAT_YOU_GET, STEPS, FAQS }).toLowerCase().includes("vendasta"),
+  hasCrmIncluded: JSON.stringify({ WHAT_YOU_GET, FAQS, STEPS }).toLowerCase().includes("crm"),
+  hasNoSpreadsheetUpdatingPromise: !JSON.stringify({ WHAT_YOU_GET, FAQS, STEPS }).toLowerCase().includes("update your spreadsheet"),
+  hasMoveAwayFromSpreadsheets: JSON.stringify({ WHAT_YOU_GET, FAQS, STEPS }).toLowerCase().includes("away from spreadsheets"),
+};
+
+function Section({ id, children, className = "" }) {
+  return (
+    <section id={id} className={`relative z-10 px-4 py-16 sm:px-6 lg:flex lg:min-h-screen lg:snap-start lg:snap-always lg:items-center ${className}`}>
+      <div className="mx-auto w-full max-w-7xl">{children}</div>
+    </section>
+  );
+}
+
+function Reveal({ children, className = "", delay = 0 }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 38, scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: false, margin: "-80px" }}
+      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function Card({ children, className = "" }) {
+  return (
+    <motion.article
+      whileHover={{ y: -8, scale: 1.01 }}
+      className={`relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.055] p-6 shadow-2xl shadow-black/30 backdrop-blur-xl ${className}`}
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+      {children}
+    </motion.article>
+  );
+}
+
+function CommandPanel() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30, rotateX: 16, rotateY: -14 }}
+      animate={{ opacity: 1, y: [0, -16, 0], rotateX: [16, 8, 16], rotateY: [-14, -6, -14] }}
+      transition={{ opacity: { duration: 0.7 }, y: { duration: 8, repeat: Infinity, ease: "easeInOut" }, rotateX: { duration: 8, repeat: Infinity, ease: "easeInOut" }, rotateY: { duration: 8, repeat: Infinity, ease: "easeInOut" } }}
+      className="relative hidden rounded-[2.25rem] border border-white/15 bg-slate-950/75 p-5 shadow-[0_45px_120px_rgba(0,0,0,0.7)] backdrop-blur-2xl lg:block"
+    >
+      <div className="absolute -inset-10 -z-10 rounded-full bg-cyan-400/20 blur-3xl" />
+      <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+        <div>
+          <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Konectd Command Center</div>
+          <div className="mt-1 text-xl font-black text-white">AI Front Desk + CRM</div>
+        </div>
+        <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-200">Live</div>
+      </div>
+      <div className="mt-5 grid grid-cols-2 gap-4">
+        {[
+          ["Calls", "24/7", "answered"],
+          ["Leads", "Auto", "captured"],
+          ["CRM", "Included", "organized"],
+          ["Follow-up", "Queued", "tracked"],
+        ].map(([label, value, note]) => (
+          <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+            <div className="text-xs text-slate-400">{label}</div>
+            <div className="mt-2 text-2xl font-black text-white">{value}</div>
+            <div className="mt-1 text-xs text-cyan-200/60">{note}</div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-5 rounded-3xl border border-white/10 bg-gradient-to-br from-cyan-400/10 via-violet-400/10 to-emerald-400/10 p-4">
+        <div className="flex items-center justify-between text-sm text-slate-300">
+          <span>Moving away from spreadsheets</span>
+          <span className="text-emerald-200">In progress</span>
+        </div>
+        {[92, 76, 88].map((width, index) => (
+          <div key={index} className="mt-4 h-3 overflow-hidden rounded-full bg-white/10">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: `${width}%` }}
+              viewport={{ once: false }}
+              transition={{ duration: 1.1, delay: index * 0.12 }}
+              className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-violet-300 to-emerald-300"
+            />
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function AuditForm() {
+  return (
+    <form className="mx-auto mt-10 max-w-3xl rounded-[2rem] border border-white/10 bg-white/[0.055] p-6 text-left shadow-2xl shadow-black/30 backdrop-blur-xl md:p-8">
+      <div className="grid gap-4 sm:grid-cols-2">
+        {[
+          ["Business name", "Company name"],
+          ["Website", "https://"],
+          ["Best contact", "Email or phone"],
+        ].map(([label, placeholder]) => (
+          <label key={label} className="block">
+            <span className="text-sm font-bold text-slate-300">{label}</span>
+            <input className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" placeholder={placeholder} />
+          </label>
+        ))}
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">Business type</span>
+          <select className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" defaultValue="">
+            <option value="" disabled>Select one</option>
+            <option>Construction</option>
+            <option>Trades / field service</option>
+            <option>Salon / spa / appointment business</option>
+            <option>Home or consumer service</option>
+            <option>Other call-heavy service business</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">What are you using today?</span>
+          <select className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" defaultValue="">
+            <option value="" disabled>Select one</option>
+            <option>Spreadsheets</option>
+            <option>Basic CRM</option>
+            <option>Mostly inboxes and notes</option>
+            <option>Nothing organized</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-sm font-bold text-slate-300">Biggest problem</span>
+          <select className="mt-2 w-full min-w-0 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" defaultValue="">
+            <option value="" disabled>Select one</option>
+            <option>Missed calls or slow replies</option>
+            <option>Spreadsheets are messy</option>
+            <option>Follow-up gets forgotten</option>
+            <option>Need more reviews</option>
+            <option>Need better visibility</option>
+          </select>
+        </label>
+      </div>
+      <label className="mt-4 block">
+        <span className="text-sm font-bold text-slate-300">What is breaking today?</span>
+        <textarea className="mt-2 min-h-28 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none focus:border-cyan-300/50" placeholder="Example: We miss calls during jobs, our customer info is in spreadsheets, and follow-up gets forgotten." />
+      </label>
+      <button type="button" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-base font-black text-slate-950 transition hover:scale-[1.01] sm:w-auto">
+        Request Audit <Icon name="arrowRight" className="h-5 w-5" />
+      </button>
+      <p className="mt-4 text-xs leading-relaxed text-slate-500">We use your answers to find the first place a CRM and AI front desk can stop missed jobs.</p>
+    </form>
+  );
+}
+
+export default function KonectdCinematicSite() {
+  const offers = useMemo(() => WHAT_YOU_GET, []);
+
+  if (typeof console !== "undefined" && Object.values(TEST_RESULTS).some((passed) => !passed)) {
+    console.warn("KonectdCinematicSite self-test failed", TEST_RESULTS);
   }
-  </script>
 
-  <style>
-    :root {
-      --bg: #050814;
-      --panel: rgba(255, 255, 255, 0.055);
-      --panel-strong: rgba(15, 23, 42, 0.72);
-      --border: rgba(255, 255, 255, 0.11);
-      --text: #ffffff;
-      --muted: #94a3b8;
-      --cyan: #67e8f9;
-      --violet: #c4b5fd;
-      --emerald: #6ee7b7;
-      --red: #fecaca;
-      --shadow: 0 40px 120px rgba(0, 0, 0, 0.45);
-      --radius-xl: 2rem;
-      --radius-2xl: 3rem;
-      --max: 1180px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      background: var(--bg);
-    }
-
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.2), transparent 34%),
-        radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.18), transparent 30%),
-        radial-gradient(circle at 10% 60%, rgba(52, 211, 153, 0.14), transparent 32%),
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-      background-size: auto, auto, auto, 44px 44px, 44px 44px;
-      opacity: 1;
-      z-index: -2;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.6) 100%);
-      z-index: -1;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .page {
-      min-height: 100vh;
-    }
-
-    @media (min-width: 1024px) {
-      .page {
-        height: 100dvh;
-        overflow-y: auto;
-        scroll-snap-type: y mandatory;
-      }
-
-      .snap-section {
-        min-height: 100dvh;
-        scroll-snap-align: start;
-        scroll-snap-stop: always;
-        display: flex;
-        align-items: center;
-      }
-    }
-
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 50;
-      padding: 1rem;
-    }
-
-    .nav {
-      max-width: var(--max);
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      border: 1px solid var(--border);
-      background: rgba(2, 6, 23, 0.72);
-      backdrop-filter: blur(20px);
-      border-radius: 999px;
-      padding: 0.75rem 0.9rem;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      min-width: 0;
-    }
-
-    .brand-mark {
-      width: 2.5rem;
-      height: 2.5rem;
-      display: grid;
-      place-items: center;
-      border-radius: 999px;
-      background: white;
-      color: #020617;
-      font-weight: 900;
-      flex: 0 0 auto;
-    }
-
-    .brand-title {
-      font-size: 0.95rem;
-      font-weight: 950;
-      letter-spacing: -0.02em;
-      white-space: nowrap;
-    }
-
-    .brand-subtitle {
-      display: none;
-      color: var(--muted);
-      font-size: 0.68rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      margin-top: 0.12rem;
-    }
-
-    .nav-links {
-      display: none;
-      align-items: center;
-      gap: 1.4rem;
-      color: #cbd5e1;
-      font-size: 0.92rem;
-    }
-
-    .nav-links a:hover {
-      color: white;
-    }
-
-    .nav-cta {
-      flex: 0 0 auto;
-      border-radius: 999px;
-      background: white;
-      color: #020617;
-      padding: 0.72rem 1rem;
-      font-size: 0.9rem;
-      font-weight: 900;
-      transition: transform 0.2s ease;
-    }
-
-    .nav-cta:hover {
-      transform: scale(1.04);
-    }
-
-    .nav-cta .desktop {
-      display: none;
-    }
-
-    @media (min-width: 640px) {
-      .brand-subtitle,
-      .nav-cta .desktop {
-        display: block;
-      }
-
-      .nav-cta .mobile {
-        display: none;
-      }
-
-      .nav {
-        padding-inline: 1.25rem;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .nav-links {
-        display: flex;
-      }
-    }
-
-    .section {
-      width: 100%;
-      padding: 6rem 1rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero {
-      padding-top: 9rem;
-    }
-
-    .container {
-      width: 100%;
-      max-width: var(--max);
-      margin: 0 auto;
-    }
-
-    .grid {
-      display: grid;
-      gap: 1.25rem;
-    }
-
-    .grid-2,
-    .grid-3,
-    .grid-4 {
-      grid-template-columns: 1fr;
-    }
-
-    @media (min-width: 700px) {
-      .grid-2,
-      .grid-3,
-      .grid-4 {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (min-width: 1100px) {
-      .grid-3 {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .grid-4 {
-        grid-template-columns: repeat(4, 1fr);
-      }
-
-      .hero-grid {
-        grid-template-columns: 1.05fr 0.95fr;
-        align-items: center;
-      }
-
-      .split-grid {
-        grid-template-columns: 0.85fr 1.15fr;
-        align-items: center;
-      }
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      border: 1px solid rgba(103, 232, 249, 0.22);
-      background: rgba(103, 232, 249, 0.1);
-      color: #cffafe;
-      border-radius: 999px;
-      padding: 0.55rem 0.9rem;
-      font-size: 0.9rem;
-      font-weight: 800;
-    }
-
-    h1,
-    h2,
-    h3,
-    p {
-      margin: 0;
-    }
-
-    h1 {
-      margin-top: 1.6rem;
-      max-width: 960px;
-      font-size: clamp(3rem, 10vw, 8.5rem);
-      line-height: 0.88;
-      letter-spacing: -0.075em;
-      font-weight: 1000;
-    }
-
-    h2 {
-      margin-top: 1.2rem;
-      font-size: clamp(2.4rem, 6vw, 5.5rem);
-      line-height: 0.93;
-      letter-spacing: -0.06em;
-      font-weight: 1000;
-    }
-
-    h3 {
-      font-size: 1.45rem;
-      line-height: 1.05;
-      letter-spacing: -0.035em;
-      font-weight: 950;
-    }
-
-    .lead {
-      margin-top: 1.6rem;
-      max-width: 720px;
-      color: #cbd5e1;
-      font-size: clamp(1.12rem, 2vw, 1.45rem);
-      line-height: 1.55;
-    }
-
-    .copy {
-      color: var(--muted);
-      line-height: 1.65;
-      font-size: 1rem;
-    }
-
-    .cta-row {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    @media (min-width: 640px) {
-      .cta-row {
-        flex-direction: row;
-      }
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.55rem;
-      border-radius: 999px;
-      padding: 1rem 1.45rem;
-      font-weight: 950;
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-
-    .btn:hover {
-      transform: scale(1.04);
-    }
-
-    .btn-primary {
-      background: white;
-      color: #020617;
-      box-shadow: 0 0 50px rgba(255, 255, 255, 0.24);
-    }
-
-    .btn-secondary {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.06);
-      color: white;
-      backdrop-filter: blur(12px);
-    }
-
-    .card {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: var(--radius-xl);
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.075);
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
-    }
-
-    .card-icon {
-      width: 3.4rem;
-      height: 3.4rem;
-      display: grid;
-      place-items: center;
-      border-radius: 1rem;
-      border: 1px solid rgba(103,232,249,0.25);
-      background: rgba(103,232,249,0.09);
-      color: var(--cyan);
-      margin-bottom: 1.25rem;
-    }
-
-    .card p {
-      margin-top: 0.8rem;
-    }
-
-    .stat {
-      font-size: clamp(2.6rem, 5vw, 4rem);
-      line-height: 0.95;
-      letter-spacing: -0.06em;
-      font-weight: 1000;
-    }
-
-    .red-box {
-      margin-top: 1.25rem;
-      border: 1px solid rgba(252, 165, 165, 0.16);
-      background: rgba(252, 165, 165, 0.06);
-      color: var(--red);
-      border-radius: 1.2rem;
-      padding: 1rem;
-      line-height: 1.55;
-      font-size: 0.92rem;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      margin-top: 1.25rem;
-    }
-
-    .pill {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.06);
-      color: #e2e8f0;
-      border-radius: 999px;
-      padding: 0.55rem 0.75rem;
-      font-size: 0.78rem;
-      font-weight: 800;
-    }
-
-    .command-wrap {
-      position: relative;
-      display: none;
-    }
-
-    @media (min-width: 960px) {
-      .command-wrap {
-        display: block;
-      }
-    }
-
-    .command-card {
-      position: relative;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(2, 6, 23, 0.78);
-      border-radius: 2.25rem;
-      padding: 1.25rem;
-      box-shadow: 0 45px 120px rgba(0,0,0,0.7);
-      backdrop-filter: blur(22px);
-      transform: rotateX(15deg) rotateY(-14deg);
-      animation: floatPanel 9s ease-in-out infinite;
-    }
-
-    .command-glow {
-      position: absolute;
-      inset: -2.5rem;
-      background: rgba(34,211,238,0.18);
-      border-radius: 999px;
-      filter: blur(50px);
-      animation: pulseGlow 7s ease-in-out infinite;
-    }
-
-    .command-top,
-    .metric-grid,
-    .routing {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.045);
-      border-radius: 1.5rem;
-      padding: 1rem;
-    }
-
-    .command-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .metric-grid {
-      margin-top: 1rem;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.8rem;
-      border: 0;
-      background: transparent;
-      padding: 0;
-    }
-
-    .metric {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.045);
-      border-radius: 1.1rem;
-      padding: 1rem;
-    }
-
-    .routing {
-      margin-top: 1rem;
-      background: linear-gradient(135deg, rgba(34,211,238,0.1), rgba(167,139,250,0.1), rgba(52,211,153,0.1));
-    }
-
-    .bar {
-      height: 0.7rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.1);
-      overflow: hidden;
-      margin-top: 0.75rem;
-    }
-
-    .bar span {
-      display: block;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--emerald));
-      transform-origin: left;
-      animation: growBar 1.5s ease-out forwards;
-    }
-
-    .floating-note {
-      position: absolute;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.08);
-      color: #cffafe;
-      border-radius: 1rem;
-      padding: 0.8rem 1rem;
-      font-weight: 800;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-      font-size: 0.88rem;
-      animation: bob 7s ease-in-out infinite;
-    }
-
-    .note-left {
-      left: -2rem;
-      top: 5rem;
-    }
-
-    .note-right {
-      right: -1.5rem;
-      bottom: 5rem;
-      color: #bbf7d0;
-      animation-delay: 1s;
-    }
-
-    .ticker {
-      position: relative;
-      margin-top: 2rem;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.28);
-      border-radius: var(--radius-xl);
-      padding: 1rem 0;
-    }
-
-    .ticker::before,
-    .ticker::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 5rem;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .ticker::before {
-      left: 0;
-      background: linear-gradient(90deg, var(--bg), transparent);
-    }
-
-    .ticker::after {
-      right: 0;
-      background: linear-gradient(270deg, var(--bg), transparent);
-    }
-
-    .ticker-track {
-      display: flex;
-      gap: 1rem;
-      width: max-content;
-      animation: ticker 28s linear infinite;
-      padding-inline: 1rem;
-    }
-
-    .ticker-item {
-      min-width: 19rem;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.05);
-      border-radius: 1.2rem;
-      padding: 1rem;
-    }
-
-    .panel {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.045);
-      border-radius: var(--radius-2xl);
-      padding: clamp(1.5rem, 4vw, 3rem);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(22px);
-    }
-
-    .form {
-      max-width: 780px;
-      margin: 2rem auto 0;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.055);
-      border-radius: var(--radius-xl);
-      padding: clamp(1.2rem, 3vw, 2rem);
-      text-align: left;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(20px);
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 1rem;
-    }
-
-    @media (min-width: 700px) {
-      .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    label {
-      display: block;
-      color: #cbd5e1;
-      font-weight: 800;
-      font-size: 0.9rem;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      margin-top: 0.5rem;
-      border: 1px solid var(--border);
-      background: rgba(2,6,23,0.75);
-      color: white;
-      border-radius: 1rem;
-      padding: 0.9rem 1rem;
-      font: inherit;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: rgba(103,232,249,0.55);
-    }
-
-    textarea {
-      min-height: 7rem;
-      resize: vertical;
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(44px) scale(0.98);
-      transition: opacity 0.75s cubic-bezier(.22,1,.36,1), transform 0.75s cubic-bezier(.22,1,.36,1);
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
-    @keyframes floatPanel {
-      0%, 100% { transform: rotateX(15deg) rotateY(-14deg) translateY(0); }
-      50% { transform: rotateX(8deg) rotateY(-7deg) translateY(-16px); }
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 0.4; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.08); }
-    }
-
-    @keyframes growBar {
-      from { transform: scaleX(0); }
-      to { transform: scaleX(1); }
-    }
-
-    @keyframes bob {
-      0%, 100% { transform: translateY(0) rotate(-3deg); }
-      50% { transform: translateY(-20px) rotate(2deg); }
-    }
-
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        animation: none !important;
-        transition: none !important;
-      }
-
-      .reveal {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @media (max-width: 639px) {
-      .section {
-        padding-block: 5rem;
-      }
-
-      .hero {
-        padding-top: 8rem;
-      }
-
-      .ticker-item {
-        min-width: 16rem;
-      }
-
-      .card,
-      .panel {
-        border-radius: 1.5rem;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="page">
-    <header class="header">
-      <nav class="nav" aria-label="Primary navigation">
-        <a href="#top" class="brand" aria-label="Konectd Marketing home">
-          <div class="brand-mark">K</div>
-          <div>
-            <div class="brand-title">Konectd Marketing</div>
-            <div class="brand-subtitle">White-glove AI Workforce implementation</div>
-          </div>
-        </a>
-
-        <div class="nav-links">
-          <a href="#fit">Fit</a>
-          <a href="#offer">What You Get</a>
-          <a href="#audit">Audit</a>
-          <a href="#rollout">Implementation</a>
-        </div>
-
-        <a href="#contact" class="nav-cta">
-          <span class="desktop">Book AI Leakage Audit</span>
-          <span class="mobile">Audit</span>
-        </a>
-      </nav>
-    </header>
-
-    <main>
-      <section id="top" class="section hero snap-section">
-        <div class="container grid hero-grid">
-          <div class="reveal">
-            <div class="eyebrow">☎ Built for call-heavy service businesses using CRMs, spreadsheets, or both</div>
-            <h1>Stop losing jobs to faster competitors.</h1>
-            <p class="lead">
-              Konectd Marketing installs an AI Workforce for businesses where calls, bookings, estimates, CRM updates, reviews, and follow-up drive revenue. We build it with you, launch it with your team, and keep tuning it so it actually gets used.
-            </p>
-            <div class="cta-row">
-              <a class="btn btn-primary" href="#contact">Book Your AI Leakage Audit →</a>
-              <a class="btn btn-secondary" href="#offer">See What We Install</a>
+  return (
+    <main className="h-screen overflow-y-auto overflow-x-hidden scroll-smooth bg-[#050814] text-white lg:snap-y lg:snap-mandatory">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }} />
+
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:44px_44px] opacity-30" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,211,238,0.2),transparent_35%),radial-gradient(circle_at_80%_20%,rgba(167,139,250,0.18),transparent_30%),radial-gradient(circle_at_10%_60%,rgba(52,211,153,0.14),transparent_32%)]" />
+      </div>
+
+      <header className="fixed left-0 right-0 top-0 z-50 px-4 py-5">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/75 px-3 py-3 backdrop-blur-2xl sm:px-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-950"><Icon name="sparkles" /></div>
+            <div>
+              <div className="text-sm font-black tracking-tight md:text-base">Konectd Marketing</div>
+              <div className="hidden text-[11px] uppercase tracking-[0.18em] text-slate-400 sm:block">AI Front Desk + CRM</div>
             </div>
           </div>
+          <div className="hidden items-center gap-6 text-sm text-slate-300 lg:flex">
+            <a href="#problem" className="hover:text-white">Problem</a>
+            <a href="#offer" className="hover:text-white">What You Get</a>
+            <a href="#setup" className="hover:text-white">Setup</a>
+            <a href="#contact" className="hover:text-white">Audit</a>
+          </div>
+          <a href="#contact" className="shrink-0 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-950 transition hover:scale-105 sm:px-5">
+            <span className="hidden sm:inline">Book Audit</span><span className="sm:hidden">Audit</span>
+          </a>
+        </nav>
+      </header>
 
-          <div class="command-wrap reveal">
-            <div class="command-glow"></div>
-            <div class="command-card">
-              <div class="command-top">
-                <div>
-                  <div style="font-size:.72rem; letter-spacing:.22em; color:#a5f3fc; text-transform:uppercase;">Konectd Command Center</div>
-                  <strong style="display:block; margin-top:.25rem; font-size:1.25rem;">AI Workforce live view</strong>
+      <Section id="top" className="pt-36 lg:pt-20">
+        <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+          <Reveal>
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100">
+              <Icon name="phone" className="h-4 w-4" /> For service businesses that depend on calls, bookings, and follow-up
+            </div>
+            <h1 className="mt-7 max-w-5xl text-5xl font-black leading-[0.88] tracking-[-0.075em] sm:text-6xl md:text-8xl lg:text-9xl">
+              Stop missing calls. Stop losing jobs.
+            </h1>
+            <p className="mt-7 max-w-2xl text-xl leading-relaxed text-slate-300 md:text-2xl">
+              Konectd gives your business an AI front desk and a CRM. We answer customers faster, capture their info, book the next step, follow up, ask for reviews, and show you what is being missed.
+            </p>
+            <p className="mt-5 max-w-2xl text-lg font-bold leading-relaxed text-cyan-100">
+              No DIY bot builder. No spreadsheet chaos. We set it up for you.
+            </p>
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+              <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-base font-black text-slate-950 shadow-[0_0_50px_rgba(255,255,255,0.28)] transition hover:scale-105">
+                Find My Missed Jobs <Icon name="arrowRight" className="h-5 w-5" />
+              </a>
+              <a href="#offer" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-8 py-4 text-base font-bold text-white backdrop-blur-xl transition hover:bg-white/10">
+                What Do I Get?
+              </a>
+            </div>
+          </Reveal>
+          <CommandPanel />
+        </div>
+      </Section>
+
+      <Section id="problem">
+        <Reveal className="max-w-4xl">
+          <div className="text-sm font-bold uppercase tracking-[0.28em] text-red-200/70">The problem</div>
+          <h2 className="mt-5 text-4xl font-black tracking-[-0.055em] sm:text-5xl md:text-7xl">Your team is busy. Customers do not wait.</h2>
+          <p className="mt-6 text-xl leading-relaxed text-slate-400">If calls, estimates, and follow-up drive your revenue, slow response and messy tracking cost real jobs.</p>
+        </Reveal>
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {PROBLEMS.map((item, index) => (
+            <Reveal key={item.title} delay={index * 0.08}>
+              <Card>
+                <Icon name={item.icon} className="h-8 w-8 text-cyan-200" />
+                <h3 className="mt-5 text-2xl font-black text-white">{item.title}</h3>
+                <p className="mt-3 text-base leading-relaxed text-slate-400">{item.copy}</p>
+              </Card>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="offer">
+        <Reveal className="max-w-4xl">
+          <div className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200/70">What you get</div>
+          <h2 className="mt-5 text-4xl font-black tracking-[-0.055em] sm:text-5xl md:text-7xl">We give you the system and set it up.</h2>
+          <p className="mt-6 text-xl leading-relaxed text-slate-400">Simple version: we help you answer customers, save their info in a CRM, follow up, get reviews, and see what is happening.</p>
+        </Reveal>
+        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {offers.map((item, index) => (
+            <Reveal key={item.title} delay={index * 0.04}>
+              <Card className="h-full">
+                <Icon name={item.icon} className="h-8 w-8 text-cyan-200" />
+                <h3 className="mt-5 text-2xl font-black text-white">{item.title}</h3>
+                <p className="mt-3 text-lg font-bold leading-relaxed text-cyan-100">{item.plain}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {item.details.map((detail) => (
+                    <span key={detail} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200">{detail}</span>
+                  ))}
                 </div>
-                <span class="pill" style="color:#bbf7d0;">Active</span>
-              </div>
+              </Card>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
 
-              <div class="metric-grid">
-                <div class="metric"><small style="color:#94a3b8;">Calls</small><strong style="display:block;font-size:1.8rem;">24/7</strong><small style="color:#67e8f9;">covered</small></div>
-                <div class="metric"><small style="color:#94a3b8;">CRM</small><strong style="display:block;font-size:1.8rem;">Auto</strong><small style="color:#67e8f9;">updated</small></div>
-                <div class="metric"><small style="color:#94a3b8;">Sheets</small><strong style="display:block;font-size:1.8rem;">Clean</strong><small style="color:#67e8f9;">mapped</small></div>
-                <div class="metric"><small style="color:#94a3b8;">Follow-up</small><strong style="display:block;font-size:1.8rem;">Queued</strong><small style="color:#67e8f9;">tracked</small></div>
-              </div>
+      <Section id="industries">
+        <Reveal className="max-w-4xl">
+          <div className="text-sm font-bold uppercase tracking-[0.28em] text-emerald-200/70">Who this is for</div>
+          <h2 className="mt-5 text-4xl font-black tracking-[-0.055em] sm:text-5xl md:text-7xl">Built for service businesses that live on calls.</h2>
+          <p className="mt-6 text-xl leading-relaxed text-slate-400">If customers call, ask questions, request estimates, book appointments, need reminders, and leave reviews, this fits.</p>
+        </Reveal>
+        <div className="mt-10 flex flex-wrap gap-3">
+          {INDUSTRIES.map((industry) => (
+            <span key={industry} className="rounded-full border border-white/10 bg-white/[0.07] px-5 py-3 text-sm font-black text-white backdrop-blur-xl">{industry}</span>
+          ))}
+        </div>
+      </Section>
 
-              <div class="routing">
-                <div style="display:flex;justify-content:space-between;color:#cbd5e1;font-size:.92rem;">
-                  <span>Leakage routing</span>
-                  <span style="color:#bbf7d0;">Running</span>
-                </div>
-                <div class="bar"><span style="width:91%;"></span></div>
-                <div class="bar"><span style="width:78%;"></span></div>
-                <div class="bar"><span style="width:88%;"></span></div>
-              </div>
+      <Section id="setup">
+        <div className="grid gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+          <Reveal>
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-violet-200/70">How it works</div>
+            <h2 className="mt-5 text-4xl font-black tracking-[-0.055em] sm:text-5xl md:text-7xl">We do the heavy lifting.</h2>
+            <p className="mt-6 text-xl leading-relaxed text-slate-400">You do not build prompts, bots, automations, or CRM pipelines yourself. We build the system, train your team, and keep improving it.</p>
+          </Reveal>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {STEPS.map((step, index) => (
+              <Reveal key={step.title} delay={index * 0.05}>
+                <Card>
+                  <div className="text-sm font-black text-cyan-200">{String(index + 1).padStart(2, "0")}</div>
+                  <h3 className="mt-4 text-2xl font-black text-white">{step.title}</h3>
+                  <p className="mt-3 text-base leading-relaxed text-slate-400">{step.copy}</p>
+                </Card>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      <Section id="faq">
+        <Reveal className="max-w-4xl">
+          <div className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200/70">Plain-English answers</div>
+          <h2 className="mt-5 text-4xl font-black tracking-[-0.055em] sm:text-5xl md:text-7xl">No confusion. No tech maze.</h2>
+        </Reveal>
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          {FAQS.map((faq, index) => (
+            <Reveal key={faq.q} delay={index * 0.05}>
+              <Card>
+                <h3 className="text-2xl font-black text-white">{faq.q}</h3>
+                <p className="mt-4 text-base leading-relaxed text-slate-400">{faq.a}</p>
+              </Card>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="contact" className="pb-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <Reveal>
+            <div className="text-sm font-bold uppercase tracking-[0.28em] text-emerald-200/70">Ready to stop missing jobs?</div>
+            <h2 className="mt-5 text-4xl font-black tracking-[-0.055em] sm:text-5xl md:text-7xl">Book your Missed Jobs Audit.</h2>
+            <p className="mx-auto mt-6 max-w-2xl text-xl leading-relaxed text-slate-400">We will find where calls, customer info, follow-up, reviews, or visibility are breaking down, then show how the AI front desk and CRM can fix it.</p>
+            <AuditForm />
+            <div className="mt-8">
+              <a href="tel:+15075095368" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-8 py-4 text-base font-bold text-white backdrop-blur-xl transition hover:bg-white/10">Prefer to talk? Call (507) 509-5368</a>
             </div>
-
-            <div class="floating-note note-left">Missed calls become booked conversations</div>
-            <div class="floating-note note-right">CRM, spreadsheets, and follow-up stay moving</div>
-          </div>
+          </Reveal>
         </div>
-      </section>
-
-      <section id="fit" class="section snap-section">
-        <div class="container">
-          <div class="reveal" style="max-width:850px;">
-            <div class="eyebrow">Best-fit companies</div>
-            <h2>You are a fit when growth is limited by response, follow-up, and messy operations.</h2>
-            <p class="lead">
-              This is for real-world service businesses: construction, trades, salons, spas, field service, consumer services, and operators still relying on spreadsheets because the business grew faster than the process.
-            </p>
-          </div>
-
-          <div class="grid grid-3" style="margin-top:2.5rem;">
-            <article class="card reveal"><div class="card-icon">☎</div><h3>High call volume</h3><p class="copy">The phone rings constantly, calls get missed during jobs or appointments, and customers often choose whoever responds first.</p></article>
-            <article class="card reveal"><div class="card-icon">▦</div><h3>CRM discipline is weak</h3><p class="copy">Leads, job notes, estimates, appointment details, and follow-up tasks are inconsistent because staff are busy serving customers.</p></article>
-            <article class="card reveal"><div class="card-icon">▤</div><h3>Spreadsheets run the business</h3><p class="copy">Contacts, jobs, follow-ups, customer lists, review requests, and status tracking live in sheets that only one or two people understand.</p></article>
-            <article class="card reveal"><div class="card-icon">★</div><h3>Reviews matter to conversion</h3><p class="copy">The business wins or loses trust before the first conversation because prospects compare reviews, recency, and responsiveness.</p></article>
-            <article class="card reveal"><div class="card-icon">◷</div><h3>Appointments or estimates drive revenue</h3><p class="copy">The money is in getting qualified prospects scheduled, confirmed, reminded, and followed up with after the first contact.</p></article>
-            <article class="card reveal"><div class="card-icon">▥</div><h3>Owner visibility is poor</h3><p class="copy">The owner knows things are slipping, but cannot see which channel, location, person, or process is creating the leak.</p></article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section snap-section">
-        <div class="container">
-          <div class="reveal" style="max-width:900px;">
-            <div class="eyebrow">Where this hits hardest</div>
-            <h2>If customers call, book, request estimates, leave reviews, and need follow-up, this matters.</h2>
-          </div>
-
-          <div class="grid grid-3" style="margin-top:2.5rem;">
-            <article class="card reveal"><h3>Construction companies</h3><p class="red-box"><strong>Leak:</strong> Estimate requests, project questions, vendor calls, and follow-up often hit while the team is on job sites.</p><p class="copy"><strong style="color:#bbf7d0;">Konectd move:</strong> Capture inquiries, route urgent messages, organize estimate requests, and keep follow-up visible.</p></article>
-            <article class="card reveal"><h3>Trades and field services</h3><p class="red-box"><strong>Leak:</strong> HVAC, plumbing, electrical, roofing, pest, cleaning, and restoration teams lose jobs when calls hit during field work.</p><p class="copy"><strong style="color:#bbf7d0;">Konectd move:</strong> Answer fast, qualify the issue, capture location and urgency, and get the right next step queued.</p></article>
-            <article class="card reveal"><h3>Salons, spas, and med-spa services</h3><p class="red-box"><strong>Leak:</strong> Booking questions, reschedules, reminders, reviews, and promotional follow-up pile up during appointment-heavy days.</p><p class="copy"><strong style="color:#bbf7d0;">Konectd move:</strong> Reduce front-desk load while improving booking flow, review requests, reminders, and reactivation.</p></article>
-            <article class="card reveal"><h3>Home and consumer services</h3><p class="red-box"><strong>Leak:</strong> Landscaping, cleaning, automotive, pet services, moving, repair, and local service operators depend on fast trust and fast response.</p><p class="copy"><strong style="color:#bbf7d0;">Konectd move:</strong> Unify calls, messages, reviews, offers, and follow-up so customers do not fall through the cracks.</p></article>
-            <article class="card reveal"><h3>Multi-location service brands</h3><p class="red-box"><strong>Leak:</strong> Local teams vary in how they answer, follow up, request reviews, and log activity.</p><p class="copy"><strong style="color:#bbf7d0;">Konectd move:</strong> Create repeatable workflows, shared visibility, and consistent customer experience.</p></article>
-            <article class="card reveal"><h3>Spreadsheet-heavy operators</h3><p class="red-box"><strong>Leak:</strong> The business has revenue and demand, but the operating system is a spreadsheet patched together by whoever is most organized.</p><p class="copy"><strong style="color:#bbf7d0;">Konectd move:</strong> Turn scattered sheets into cleaner workflows for capture, status, follow-up, review requests, and reporting.</p></article>
-          </div>
-        </div>
-      </section>
-
-      <section id="offer" class="section snap-section">
-        <div class="container">
-          <div class="reveal" style="max-width:900px;">
-            <div class="eyebrow">What you get</div>
-            <h2>A complete AI Workforce implementation, not a self-serve bot builder.</h2>
-            <p class="lead">
-              Every implementation includes the core operating pieces: front desk automation, CRM or spreadsheet workflow cleanup, reputation, support, local visibility, campaigns, reporting, training, and optimization.
-            </p>
-          </div>
-
-          <div class="grid grid-2" style="margin-top:2.5rem;">
-            <article class="card reveal"><div class="card-icon">☎</div><h3>AI Front Desk</h3><p class="copy">Answer, qualify, route, and book demand before it goes cold. Handles calls, missed-call text-back, SMS, chat, web forms, FAQs, service questions, appointment requests, estimate requests, and lead summaries.</p><p class="red-box"><strong>Prevents:</strong> Missed calls and slow replies becoming competitor referrals you paid to create.</p><div class="pill-row"><span class="pill">24/7 coverage</span><span class="pill">Missed-call recovery</span><span class="pill">Lead qualification</span><span class="pill">Booking / estimate routing</span></div></article>
-
-            <article class="card reveal"><div class="card-icon">▦</div><h3>CRM + Spreadsheet Rescue</h3><p class="copy">Structure the current mess: CRM records, spreadsheet lists, lead status, job notes, customer history, follow-up tasks, reactivation lists, and owner visibility.</p><p class="red-box"><strong>Prevents:</strong> Fragile growth where nobody trusts the CRM and the spreadsheet is the real source of truth.</p><div class="pill-row"><span class="pill">CRM cleanup logic</span><span class="pill">Spreadsheet mapping</span><span class="pill">Follow-up reminders</span><span class="pill">Lead status tracking</span></div></article>
-
-            <article class="card reveal"><div class="card-icon">★</div><h3>Reputation Engine</h3><p class="copy">Request reviews, draft responses, monitor feedback patterns, and turn completed jobs and happy customers into stronger public trust.</p><p class="red-box"><strong>Prevents:</strong> Weak review velocity making every ad, referral, and sales conversation work harder.</p><div class="pill-row"><span class="pill">Review requests</span><span class="pill">Response drafting</span><span class="pill">Sentiment themes</span><span class="pill">Feedback alerts</span></div></article>
-
-            <article class="card reveal"><div class="card-icon">✦</div><h3>White-Glove Implementation</h3><p class="copy">Konectd Marketing maps your business, builds the workflows, loads your knowledge, tests the handoffs, trains staff, and keeps improving the system after real usage exposes the gaps.</p><p class="red-box"><strong>Prevents:</strong> A powerful platform becoming another dusty subscription because rollout was lazy.</p><div class="pill-row"><span class="pill">Workflow setup</span><span class="pill">Knowledge build</span><span class="pill">Team training</span><span class="pill">Ongoing tuning</span></div></article>
-          </div>
-        </div>
-      </section>
-
-      <section id="audit" class="section snap-section">
-        <div class="container">
-          <div class="reveal" style="max-width:900px;">
-            <div class="eyebrow">AI Leakage Audit</div>
-            <h2>We find the dropped balls before we automate anything.</h2>
-            <p class="lead">
-              The audit turns a vague AI conversation into a specific implementation plan. We look for the places where calls, estimates, bookings, reviews, CRM updates, spreadsheets, support, local visibility, and reporting break down.
-            </p>
-          </div>
-
-          <div class="grid grid-4" style="margin-top:2.5rem;">
-            <article class="card reveal"><h3>Call leakage</h3><p class="copy">Missed calls, after-hours demand, call reasons, estimate or appointment request flow.</p></article>
-            <article class="card reveal"><h3>CRM or spreadsheet leakage</h3><p class="copy">CRM usage, spreadsheet structure, lead status hygiene, and follow-up ownership.</p></article>
-            <article class="card reveal"><h3>Inbox leakage</h3><p class="copy">Phone, SMS, email, chat, social, staff phones, and random notes.</p></article>
-            <article class="card reveal"><h3>Review leakage</h3><p class="copy">Review volume, recency, response consistency, and feedback themes.</p></article>
-            <article class="card reveal"><h3>Local visibility leakage</h3><p class="copy">Listings, local keywords, profile completeness, and competitor visibility.</p></article>
-            <article class="card reveal"><h3>Booking and follow-up leakage</h3><p class="copy">Appointment flow, estimate follow-up, reminder cadence, and dormant customer lists.</p></article>
-            <article class="card reveal"><h3>Staff capacity leakage</h3><p class="copy">Repeated questions, manual data entry, support volume, and admin bottlenecks.</p></article>
-            <article class="card reveal"><h3>Owner visibility leakage</h3><p class="copy">Current reporting, decision cadence, performance blind spots, and accountability gaps.</p></article>
-          </div>
-
-          <div class="panel reveal" style="margin-top:2rem;">
-            <div class="grid split-grid">
-              <div>
-                <div class="eyebrow">Audit output</div>
-                <h3 style="margin-top:1rem;font-size:clamp(2rem,4vw,3rem);">A leakage map and launch order.</h3>
-              </div>
-              <div class="grid grid-3">
-                <div class="card"><h3>Score</h3><p class="copy">Rank each leak by revenue impact, urgency, and automation fit.</p></div>
-                <div class="card"><h3>Prioritize</h3><p class="copy">Choose what to launch first instead of trying to automate everything at once.</p></div>
-                <div class="card"><h3>Activate</h3><p class="copy">Build the workflows, train the team, test the handoffs, and optimize after real usage.</p></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section snap-section">
-        <div class="container">
-          <div class="reveal" style="max-width:900px;">
-            <div class="eyebrow">Why now</div>
-            <h2>The competitor who answers first is training your market to expect speed.</h2>
-            <p class="lead">
-              Waiting is not neutral. Every missed call, stale spreadsheet, unrequested review, and forgotten estimate follow-up compounds.
-            </p>
-          </div>
-
-          <div class="ticker reveal">
-            <div class="ticker-track">
-              <div class="ticker-item"><strong class="stat">24/7</strong><p class="copy">Coverage for calls, forms, chat, SMS, and basic support.</p></div>
-              <div class="ticker-item"><strong class="stat">1 layer</strong><p class="copy">Lead capture, CRM follow-up, reputation, visibility, campaigns, and reporting.</p></div>
-              <div class="ticker-item"><strong class="stat">8 leaks</strong><p class="copy">Audited before launch so we automate the right work first.</p></div>
-              <div class="ticker-item"><strong class="stat">6 steps</strong><p class="copy">From leakage audit to launch, adoption, and optimization.</p></div>
-              <div class="ticker-item"><strong class="stat">CRM or spreadsheet</strong><p class="copy">Ready for businesses with systems or businesses still running from sheets.</p></div>
-
-              <div class="ticker-item"><strong class="stat">24/7</strong><p class="copy">Coverage for calls, forms, chat, SMS, and basic support.</p></div>
-              <div class="ticker-item"><strong class="stat">1 layer</strong><p class="copy">Lead capture, CRM follow-up, reputation, visibility, campaigns, and reporting.</p></div>
-              <div class="ticker-item"><strong class="stat">8 leaks</strong><p class="copy">Audited before launch so we automate the right work first.</p></div>
-              <div class="ticker-item"><strong class="stat">6 steps</strong><p class="copy">From leakage audit to launch, adoption, and optimization.</p></div>
-              <div class="ticker-item"><strong class="stat">CRM or spreadsheet</strong><p class="copy">Ready for businesses with systems or businesses still running from sheets.</p></div>
-            </div>
-          </div>
-
-          <div class="grid grid-3" style="margin-top:2rem;">
-            <article class="card reveal"><strong class="stat">Human-led</strong><p class="copy">AI handles repetitive intake and workflow movement. Your team stays in charge of judgment, exceptions, approvals, and relationships.</p></article>
-            <article class="card reveal"><strong class="stat">White-glove</strong><p class="copy">We map, configure, test, train, and tune the system instead of handing you a bot builder.</p></article>
-            <article class="card reveal"><strong class="stat">Visible</strong><p class="copy">Calls, reviews, follow-up, campaigns, CRM activity, and spreadsheet workflows become easier to inspect.</p></article>
-          </div>
-        </div>
-      </section>
-
-      <section id="rollout" class="section snap-section">
-        <div class="container panel">
-          <div class="grid split-grid">
-            <div class="reveal">
-              <div class="eyebrow">White-glove implementation</div>
-              <h2>The rollout is what makes the system work.</h2>
-              <p class="lead">
-                Access to AI is not the hard part. A working system needs the right workflows, knowledge, routing, CRM or spreadsheet structure, testing, training, and optimization. That is what Konectd Marketing delivers.
-              </p>
-            </div>
-
-            <div class="grid grid-2">
-              <article class="card reveal"><h3>01 Leakage Audit</h3><p class="copy">Identify where revenue and time are leaking: missed calls, slow replies, weak reviews, stale CRM data, spreadsheet dependence, poor visibility, or support overload.</p></article>
-              <article class="card reveal"><h3>02 Workflow Design</h3><p class="copy">Define what AI handles, what humans handle, what gets escalated, what gets booked, what gets logged, and what gets followed up.</p></article>
-              <article class="card reveal"><h3>03 Knowledge Build</h3><p class="copy">Load services, FAQs, tone, offers, locations, pricing guardrails, handoff instructions, booking logic, and customer scenarios.</p></article>
-              <article class="card reveal"><h3>04 System Setup</h3><p class="copy">Connect the operating pieces: inbox, CRM or spreadsheet workflow, reputation process, visibility priorities, campaigns, dashboard, and handoff rules.</p></article>
-              <article class="card reveal"><h3>05 Launch Testing</h3><p class="copy">Test calls, SMS, chat, forms, reviews, CRM updates, spreadsheet outputs, support questions, and escalation paths before going live.</p></article>
-              <article class="card reveal"><h3>06 Optimization</h3><p class="copy">Train staff, define ownership, review transcripts, inspect missed opportunities, tune workflows, and keep improving the system after launch.</p></article>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section snap-section">
-        <div class="container">
-          <div class="panel reveal">
-            <div style="max-width:850px;">
-              <div class="eyebrow">The real cost</div>
-              <h2>Staying the same is not neutral.</h2>
-              <p class="lead">
-                Every missed call, stale CRM record, spreadsheet mistake, unanswered review, scattered inbox, weak listing, slow support reply, and forgotten follow-up compounds. Konectd Marketing exists to stop that leakage with a system your team can actually run.
-              </p>
-            </div>
-
-            <div class="pill-row" style="margin-top:2rem;">
-              <span class="pill">Lead capture</span>
-              <span class="pill">CRM + sheets</span>
-              <span class="pill">Reputation</span>
-              <span class="pill">Local visibility</span>
-              <span class="pill">Support</span>
-              <span class="pill">Reporting</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" class="section snap-section">
-        <div class="container" style="max-width:900px;text-align:center;">
-          <div class="reveal">
-            <div class="eyebrow">Ready to see the leaks?</div>
-            <h2>Book your AI Leakage Audit.</h2>
-            <p class="lead" style="margin-inline:auto;">
-              We will identify the first place Konectd Marketing can create practical movement: missed calls, slow replies, CRM or spreadsheet chaos, review flow, support load, local visibility, campaigns, or owner reporting.
-            </p>
-
-            <form class="form" action="#" method="post">
-              <div class="form-grid">
-                <label>
-                  Business name
-                  <input name="business_name" placeholder="Company name" required />
-                </label>
-
-                <label>
-                  Website
-                  <input name="website" placeholder="https://" />
-                </label>
-
-                <label>
-                  Best contact
-                  <input name="contact" placeholder="Email or phone" required />
-                </label>
-
-                <label>
-                  Business type
-                  <select name="business_type" required>
-                    <option value="">Select one</option>
-                    <option>Construction</option>
-                    <option>Trades / field service</option>
-                    <option>Salon / spa / appointment business</option>
-                    <option>Home or consumer service</option>
-                    <option>Multi-location service brand</option>
-                    <option>Other call-heavy service business</option>
-                  </select>
-                </label>
-
-                <label>
-                  Current system
-                  <select name="current_system" required>
-                    <option value="">Select one</option>
-                    <option>CRM</option>
-                    <option>Spreadsheets</option>
-                    <option>CRM + spreadsheets</option>
-                    <option>Mostly inboxes and notes</option>
-                  </select>
-                </label>
-
-                <label>
-                  Biggest leak
-                  <select name="biggest_leak" required>
-                    <option value="">Select one</option>
-                    <option>Missed calls or slow replies</option>
-                    <option>CRM or spreadsheet chaos</option>
-                    <option>Estimate or appointment follow-up</option>
-                    <option>Reviews and reputation</option>
-                    <option>Support load</option>
-                    <option>Owner visibility</option>
-                  </select>
-                </label>
-              </div>
-
-              <label style="margin-top:1rem;">
-                What is breaking today?
-                <textarea name="message" placeholder="Example: We miss calls during jobs, estimates sit too long, and follow-up lives in a spreadsheet."></textarea>
-              </label>
-
-              <button class="btn btn-primary" type="submit" style="border:0;margin-top:1.25rem;cursor:pointer;">
-                Request AI Leakage Audit →
-              </button>
-
-              <p class="copy" style="font-size:.8rem;margin-top:1rem;">
-                We use your answers to identify the first practical automation win before recommending any rollout.
-              </p>
-            </form>
-
-            <div style="margin-top:1.5rem;">
-              <a class="btn btn-secondary" href="tel:+15075095368">Prefer to talk? Call (507) 509-5368</a>
-            </div>
-          </div>
-        </div>
-      </section>
+      </Section>
     </main>
-  </div>
-
-  <script>
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          } else {
-            entry.target.classList.remove("visible");
-          }
-        });
-      },
-      { threshold: 0.16 }
-    );
-
-    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
-  </script>
-</body>
-</html>
+  );
+}
