@@ -104,8 +104,14 @@
       --cyan: #67e8f9;
       --violet: #c4b5fd;
       --emerald: #6ee7b7;
+      --amber: #fbbf24;
+      --rose: #fb7185;
+      --blue: #60a5fa;
       --red: #fecaca;
       --shadow: 0 40px 120px rgba(0, 0, 0, 0.45);
+      --glow-cyan: 0 0 60px rgba(34, 211, 238, 0.24);
+      --glow-violet: 0 0 70px rgba(167, 139, 250, 0.2);
+      --glow-emerald: 0 0 70px rgba(52, 211, 153, 0.18);
       --radius-xl: 2rem;
       --radius-2xl: 3rem;
       --max: 1180px;
@@ -134,9 +140,11 @@
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.2), transparent 34%),
-        radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.18), transparent 30%),
-        radial-gradient(circle at 10% 60%, rgba(52, 211, 153, 0.14), transparent 32%),
+        radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.24), transparent 34%),
+        radial-gradient(circle at 82% 18%, rgba(167, 139, 250, 0.24), transparent 30%),
+        radial-gradient(circle at 8% 62%, rgba(52, 211, 153, 0.18), transparent 32%),
+        radial-gradient(circle at 55% 88%, rgba(251, 191, 36, 0.11), transparent 34%),
+        radial-gradient(circle at 18% 12%, rgba(251, 113, 133, 0.13), transparent 26%),
         linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
       background-size: auto, auto, auto, 44px 44px, 44px 44px;
@@ -151,6 +159,113 @@
       background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.62) 100%);
       z-index: -1;
     }
+
+    .aurora {
+      position: fixed;
+      inset: auto auto 8% -10%;
+      width: 32rem;
+      height: 32rem;
+      border-radius: 999px;
+      background: conic-gradient(from 90deg, rgba(34,211,238,0.18), rgba(167,139,250,0.24), rgba(52,211,153,0.18), rgba(251,191,36,0.14), rgba(34,211,238,0.18));
+      filter: blur(70px);
+      opacity: 0.8;
+      pointer-events: none;
+      animation: driftAurora 16s ease-in-out infinite alternate;
+      z-index: -1;
+    }
+
+    .aurora.two {
+      inset: 12% -12% auto auto;
+      width: 28rem;
+      height: 28rem;
+      animation-duration: 19s;
+      animation-delay: -5s;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: 12% auto auto 4%;
+      width: 10rem;
+      height: 10rem;
+      border-radius: 999px;
+      background: rgba(103,232,249,0.08);
+      filter: blur(46px);
+      pointer-events: none;
+    }
+
+    .section:nth-of-type(odd)::before {
+      left: auto;
+      right: 5%;
+      background: rgba(196,181,253,0.09);
+    }
+
+    .color-band {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border-radius: 999px;
+      padding: 0.4rem;
+      background: linear-gradient(90deg, rgba(103,232,249,0.18), rgba(196,181,253,0.18), rgba(110,231,183,0.18), rgba(251,191,36,0.15));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #ffffff 0%, #a5f3fc 28%, #c4b5fd 58%, #bbf7d0 82%, #ffffff 100%);
+      background-size: 180% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmerText 7s ease-in-out infinite alternate;
+    }
+
+    .accent-line {
+      width: min(100%, 30rem);
+      height: 4px;
+      margin-top: 1.5rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--emerald), var(--amber));
+      box-shadow: var(--glow-cyan);
+    }
+
+    .mini-proof {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-top: 1.6rem;
+      max-width: 720px;
+    }
+
+    @media (min-width: 700px) {
+      .mini-proof {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .mini-proof-item {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025));
+      border-radius: 1.25rem;
+      padding: 1rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .mini-proof-item strong {
+      display: block;
+      font-size: 1.35rem;
+      color: white;
+      letter-spacing: -0.04em;
+    }
+
+    .mini-proof-item span {
+      display: block;
+      margin-top: 0.25rem;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      line-height: 1.35;
+    }
+
 
     a {
       color: inherit;
@@ -193,8 +308,10 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      border: 1px solid var(--border);
-      background: rgba(2, 6, 23, 0.75);
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(135deg, rgba(15,23,42,0.84), rgba(2,6,23,0.72)),
+        linear-gradient(90deg, rgba(103,232,249,0.12), rgba(196,181,253,0.1));
       backdrop-filter: blur(20px);
       border-radius: 999px;
       padding: 0.75rem 0.9rem;
@@ -213,8 +330,9 @@
       display: grid;
       place-items: center;
       border-radius: 999px;
-      background: white;
+      background: linear-gradient(135deg, #ffffff, #a5f3fc 35%, #c4b5fd 70%, #bbf7d0);
       color: #020617;
+      box-shadow: 0 0 28px rgba(103,232,249,0.35);
       font-weight: 1000;
       flex: 0 0 auto;
     }
@@ -434,9 +552,9 @@
     }
 
     .btn-primary {
-      background: white;
+      background: linear-gradient(135deg, #ffffff, #a5f3fc 35%, #c4b5fd 72%, #bbf7d0);
       color: #020617;
-      box-shadow: 0 0 50px rgba(255, 255, 255, 0.24);
+      box-shadow: 0 0 50px rgba(103,232,249,0.32);
       border: 0;
     }
 
@@ -450,14 +568,30 @@
     .card {
       position: relative;
       overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.035)),
+        radial-gradient(circle at top right, rgba(103,232,249,0.11), transparent 38%),
+        var(--panel);
       border-radius: var(--radius-xl);
       padding: 1.5rem;
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
       transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
       height: 100%;
+    }
+
+
+    .grid .card:nth-child(3n+1) {
+      box-shadow: var(--shadow), var(--glow-cyan);
+    }
+
+    .grid .card:nth-child(3n+2) {
+      box-shadow: var(--shadow), var(--glow-violet);
+    }
+
+    .grid .card:nth-child(3n+3) {
+      box-shadow: var(--shadow), var(--glow-emerald);
     }
 
     .card:hover {
@@ -480,9 +614,10 @@
       display: grid;
       place-items: center;
       border-radius: 1rem;
-      border: 1px solid rgba(103,232,249,0.25);
-      background: rgba(103,232,249,0.09);
-      color: var(--cyan);
+      border: 1px solid rgba(255,255,255,0.16);
+      background: linear-gradient(135deg, rgba(103,232,249,0.2), rgba(196,181,253,0.16), rgba(110,231,183,0.16));
+      color: white;
+      box-shadow: var(--glow-cyan);
       margin-bottom: 1.25rem;
       font-size: 1.45rem;
     }
@@ -510,8 +645,8 @@
     }
 
     .pill {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.13);
+      background: linear-gradient(135deg, rgba(103,232,249,0.12), rgba(196,181,253,0.1));
       color: #e2e8f0;
       border-radius: 999px;
       padding: 0.55rem 0.75rem;
@@ -527,8 +662,9 @@
     }
 
     .industry-pill {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(135deg, rgba(103,232,249,0.13), rgba(196,181,253,0.12), rgba(110,231,183,0.1));
       border-radius: 999px;
       padding: 0.85rem 1.1rem;
       color: #fff;
@@ -689,6 +825,16 @@
       transform: translateY(0) scale(1);
     }
 
+    @keyframes driftAurora {
+      0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+      100% { transform: translate3d(12vw, -8vh, 0) rotate(18deg) scale(1.12); }
+    }
+
+    @keyframes shimmerText {
+      0% { background-position: 0% center; }
+      100% { background-position: 100% center; }
+    }
+
     @keyframes floatPanel {
       0%, 100% { transform: rotateX(15deg) rotateY(-14deg) translateY(0); }
       50% { transform: rotateX(8deg) rotateY(-7deg) translateY(-16px); }
@@ -741,6 +887,8 @@
 </head>
 
 <body>
+  <div class="aurora"></div>
+  <div class="aurora two"></div>
   <div class="page">
     <header class="header">
       <nav class="nav" aria-label="Primary navigation">
@@ -770,14 +918,20 @@
       <section id="top" class="section hero snap-section">
         <div class="container grid hero-grid">
           <div class="reveal">
-            <div class="eyebrow">☎ For service businesses that depend on calls, bookings, and follow-up</div>
-            <h1>Stop missing calls. Stop losing jobs.</h1>
+            <div class="color-band"><div class="eyebrow">☎ For service businesses that depend on calls, bookings, and follow-up</div></div>
+            <h1><span class="gradient-text">Stop missing calls.</span><br />Stop losing jobs.</h1>
             <p class="lead">
               Konectd gives your business an AI front desk and a CRM. We answer customers faster, capture their info, book the next step, follow up, ask for reviews, and show you what is being missed.
             </p>
             <p class="strong-line">
               No DIY bot builder. No spreadsheet chaos. We set it up for you.
             </p>
+            <div class="accent-line"></div>
+            <div class="mini-proof">
+              <div class="mini-proof-item"><strong>24/7</strong><span>AI front desk coverage when your team is busy.</span></div>
+              <div class="mini-proof-item"><strong>CRM</strong><span>Included so customer info stops living in sheets.</span></div>
+              <div class="mini-proof-item"><strong>Done-for-you</strong><span>We set up, train, launch, and tune it.</span></div>
+            </div>
             <div class="cta-row">
               <a class="btn btn-primary" href="#contact">Find My Missed Jobs →</a>
               <a class="btn btn-secondary" href="#offer">What Do I Get?</a>
@@ -819,11 +973,12 @@
       <section id="problem" class="section snap-section">
         <div class="container">
           <div class="reveal" style="max-width:850px;">
-            <div class="eyebrow">The problem</div>
+            <div class="color-band"><div class="eyebrow">The problem</div></div>
             <h2>Your team is busy. Customers do not wait.</h2>
             <p class="lead">
               If calls, estimates, and follow-up drive your revenue, slow response and messy tracking cost real jobs.
             </p>
+            <div class="accent-line"></div>
           </div>
 
           <div class="grid grid-3" style="margin-top:2.5rem;">
@@ -851,11 +1006,12 @@
       <section id="offer" class="section snap-section">
         <div class="container">
           <div class="reveal" style="max-width:900px;">
-            <div class="eyebrow">What you get</div>
+            <div class="color-band"><div class="eyebrow">What you get</div></div>
             <h2>We give you the system and set it up.</h2>
             <p class="lead">
               Simple version: we help you answer customers, save their info in a CRM, follow up, get reviews, and see what is happening.
             </p>
+            <div class="accent-line"></div>
           </div>
 
           <div class="grid grid-3" style="margin-top:2.5rem;">
@@ -937,11 +1093,12 @@
       <section id="industries" class="section snap-section">
         <div class="container">
           <div class="reveal" style="max-width:900px;">
-            <div class="eyebrow">Who this is for</div>
+            <div class="color-band"><div class="eyebrow">Who this is for</div></div>
             <h2>Built for service businesses that live on calls.</h2>
             <p class="lead">
               If customers call, ask questions, request estimates, book appointments, need reminders, and leave reviews, this fits.
             </p>
+            <div class="accent-line"></div>
           </div>
 
           <div class="industry-pills reveal">
@@ -965,7 +1122,7 @@
         <div class="container panel">
           <div class="grid split-grid">
             <div class="reveal">
-              <div class="eyebrow">How it works</div>
+              <div class="color-band"><div class="eyebrow">How it works</div></div>
               <h2>We do the heavy lifting.</h2>
               <p class="lead">
                 You do not build prompts, bots, automations, or CRM pipelines yourself. We build the system, train your team, and keep improving it.
@@ -986,7 +1143,7 @@
       <section id="faq" class="section snap-section">
         <div class="container">
           <div class="reveal" style="max-width:850px;">
-            <div class="eyebrow">Plain-English answers</div>
+            <div class="color-band"><div class="eyebrow">Plain-English answers</div></div>
             <h2>No confusion. No tech maze.</h2>
           </div>
 
@@ -1002,7 +1159,7 @@
       <section id="contact" class="section snap-section">
         <div class="container" style="max-width:900px;text-align:center;">
           <div class="reveal">
-            <div class="eyebrow">Ready to stop missing jobs?</div>
+            <div class="color-band"><div class="eyebrow">Ready to stop missing jobs?</div></div>
             <h2>Book your Missed Jobs Audit.</h2>
             <p class="lead" style="margin-inline:auto;">
               We will find where calls, customer info, follow-up, reviews, or visibility are breaking down, then show how the AI front desk and CRM can fix it.
