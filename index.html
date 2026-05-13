@@ -101,6 +101,9 @@
       --border: rgba(255, 255, 255, 0.11);
       --text: #ffffff;
       --muted: #94a3b8;
+      --soft: #cbd5e1;
+      --surface: rgba(2, 6, 23, 0.78);
+      --input: rgba(2,6,23,0.75);
       --cyan: #67e8f9;
       --violet: #c4b5fd;
       --emerald: #6ee7b7;
@@ -115,6 +118,29 @@
       --radius-xl: 2rem;
       --radius-2xl: 3rem;
       --max: 1180px;
+    }
+
+    :root[data-theme="light"] {
+      --bg: #f8fafc;
+      --panel: rgba(255, 255, 255, 0.78);
+      --panel-strong: rgba(255, 255, 255, 0.88);
+      --border: rgba(15, 23, 42, 0.12);
+      --text: #07111f;
+      --muted: #475569;
+      --soft: #334155;
+      --surface: rgba(255,255,255,0.86);
+      --input: rgba(255,255,255,0.92);
+      --cyan: #0891b2;
+      --violet: #7c3aed;
+      --emerald: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --blue: #2563eb;
+      --red: #991b1b;
+      --shadow: 0 35px 90px rgba(15, 23, 42, 0.14);
+      --glow-cyan: 0 0 55px rgba(8, 145, 178, 0.18);
+      --glow-violet: 0 0 60px rgba(124, 58, 237, 0.16);
+      --glow-emerald: 0 0 60px rgba(5, 150, 105, 0.15);
     }
 
     * {
@@ -145,8 +171,8 @@
         radial-gradient(circle at 8% 62%, rgba(52, 211, 153, 0.18), transparent 32%),
         radial-gradient(circle at 55% 88%, rgba(251, 191, 36, 0.11), transparent 34%),
         radial-gradient(circle at 18% 12%, rgba(251, 113, 133, 0.13), transparent 26%),
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+        linear-gradient(color-mix(in srgb, var(--text) 4%, transparent) 1px, transparent 1px),
+        linear-gradient(90deg, color-mix(in srgb, var(--text) 4%, transparent) 1px, transparent 1px);
       background-size: auto, auto, auto, 44px 44px, 44px 44px;
       z-index: -2;
     }
@@ -156,7 +182,7 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.62) 100%);
+      background: radial-gradient(circle at center, transparent 0%, color-mix(in srgb, var(--bg) 10%, transparent) 65%, color-mix(in srgb, var(--bg) 48%, transparent) 100%);
       z-index: -1;
     }
 
@@ -181,6 +207,76 @@
       animation-duration: 19s;
       animation-delay: -5s;
     }
+
+    .scroll-rail {
+      position: fixed;
+      right: 1.25rem;
+      top: 50%;
+      z-index: 60;
+      display: none;
+      width: 0.55rem;
+      height: 14rem;
+      padding: 2px;
+      transform: translateY(-50%);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--surface) 70%, transparent);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .scroll-progress {
+      width: 100%;
+      height: 8%;
+      border-radius: inherit;
+      background: linear-gradient(180deg, var(--cyan), var(--violet), var(--emerald), var(--amber));
+      box-shadow: var(--glow-cyan);
+      transition: height 0.08s linear;
+    }
+
+    @media (min-width: 1024px) {
+      .scroll-rail {
+        display: block;
+      }
+    }
+
+    .theme-toggle {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 70;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 86%, transparent);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0.65rem 0.85rem;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      cursor: pointer;
+    }
+
+    .theme-toggle span:first-child {
+      display: grid;
+      width: 1.65rem;
+      height: 1.65rem;
+      place-items: center;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet), var(--emerald));
+      color: var(--text);
+      box-shadow: var(--glow-cyan);
+    }
+
+    :root[data-theme="light"] .theme-toggle span:first-child {
+      color: #020617;
+      background: linear-gradient(135deg, #fef3c7, #a5f3fc, #ddd6fe);
+    }
+
 
     .section::before {
       content: "";
@@ -212,7 +308,7 @@
     }
 
     .gradient-text {
-      background: linear-gradient(100deg, #ffffff 0%, #a5f3fc 28%, #c4b5fd 58%, #bbf7d0 82%, #ffffff 100%);
+      background: linear-gradient(100deg, var(--text) 0%, var(--cyan) 28%, var(--violet) 58%, var(--emerald) 82%, var(--text) 100%);
       background-size: 180% auto;
       -webkit-background-clip: text;
       background-clip: text;
@@ -254,7 +350,7 @@
     .mini-proof-item strong {
       display: block;
       font-size: 1.35rem;
-      color: white;
+      color: var(--text);
       letter-spacing: -0.04em;
     }
 
@@ -310,7 +406,7 @@
       gap: 0.75rem;
       border: 1px solid rgba(255,255,255,0.14);
       background:
-        linear-gradient(135deg, rgba(15,23,42,0.84), rgba(2,6,23,0.72)),
+        linear-gradient(135deg, color-mix(in srgb, var(--surface) 88%, transparent), color-mix(in srgb, var(--surface) 72%, transparent)),
         linear-gradient(90deg, rgba(103,232,249,0.12), rgba(196,181,253,0.1));
       backdrop-filter: blur(20px);
       border-radius: 999px;
@@ -362,7 +458,7 @@
     }
 
     .nav-links a:hover {
-      color: white;
+      color: var(--text);
     }
 
     .nav-cta {
@@ -479,24 +575,24 @@
       margin-top: 1.6rem;
       max-width: 960px;
       font-size: clamp(3.1rem, 10vw, 8.8rem);
-      line-height: 0.88;
-      letter-spacing: -0.075em;
-      font-weight: 1000;
+      line-height: 0.96;
+      letter-spacing: -0.045em;
+      font-weight: 950;
     }
 
     h2 {
       margin-top: 1.2rem;
       font-size: clamp(2.35rem, 6vw, 5.4rem);
-      line-height: 0.93;
-      letter-spacing: -0.06em;
-      font-weight: 1000;
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      font-weight: 930;
     }
 
     h3 {
       font-size: 1.45rem;
-      line-height: 1.05;
-      letter-spacing: -0.035em;
-      font-weight: 950;
+      line-height: 1.12;
+      letter-spacing: -0.018em;
+      font-weight: 900;
     }
 
     .lead {
@@ -561,7 +657,7 @@
     .btn-secondary {
       border: 1px solid var(--border);
       background: rgba(255,255,255,0.06);
-      color: white;
+      color: var(--text);
       backdrop-filter: blur(12px);
     }
 
@@ -616,7 +712,7 @@
       border-radius: 1rem;
       border: 1px solid rgba(255,255,255,0.16);
       background: linear-gradient(135deg, rgba(103,232,249,0.2), rgba(196,181,253,0.16), rgba(110,231,183,0.16));
-      color: white;
+      color: var(--text);
       box-shadow: var(--glow-cyan);
       margin-bottom: 1.25rem;
       font-size: 1.45rem;
@@ -794,8 +890,8 @@
       width: 100%;
       margin-top: 0.5rem;
       border: 1px solid var(--border);
-      background: rgba(2,6,23,0.75);
-      color: white;
+      background: var(--input);
+      color: var(--text);
       border-radius: 1rem;
       padding: 0.9rem 1rem;
       font: inherit;
@@ -889,7 +985,12 @@
 <body>
   <div class="aurora"></div>
   <div class="aurora two"></div>
-  <div class="page">
+  <div class="scroll-rail" aria-hidden="true"><div class="scroll-progress" id="scrollProgress"></div></div>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme">
+    <span id="themeIcon">☾</span>
+    <span id="themeLabel">Dark</span>
+  </button>
+  <div class="page" id="pageScroll">
     <header class="header">
       <nav class="nav" aria-label="Primary navigation">
         <a href="#top" class="brand" aria-label="Konectd Marketing home">
@@ -943,23 +1044,23 @@
             <div class="command-card">
               <div class="command-top">
                 <div>
-                  <div style="font-size:.72rem; letter-spacing:.22em; color:#a5f3fc; text-transform:uppercase;">Konectd Command Center</div>
+                  <div style="font-size:.72rem; letter-spacing:.22em; color:var(--cyan); text-transform:uppercase;">Konectd Command Center</div>
                   <strong style="display:block; margin-top:.25rem; font-size:1.25rem;">AI Front Desk + CRM</strong>
                 </div>
-                <span class="pill" style="color:#bbf7d0;">Live</span>
+                <span class="pill" style="color:var(--emerald);">Live</span>
               </div>
 
               <div class="metric-grid">
-                <div class="metric"><small style="color:#94a3b8;">Calls</small><strong style="display:block;font-size:1.8rem;">24/7</strong><small style="color:#67e8f9;">answered</small></div>
-                <div class="metric"><small style="color:#94a3b8;">Leads</small><strong style="display:block;font-size:1.8rem;">Auto</strong><small style="color:#67e8f9;">captured</small></div>
-                <div class="metric"><small style="color:#94a3b8;">CRM</small><strong style="display:block;font-size:1.8rem;">Included</strong><small style="color:#67e8f9;">organized</small></div>
-                <div class="metric"><small style="color:#94a3b8;">Follow-up</small><strong style="display:block;font-size:1.8rem;">Queued</strong><small style="color:#67e8f9;">tracked</small></div>
+                <div class="metric"><small style="color:var(--muted);">Calls</small><strong style="display:block;font-size:1.8rem;">24/7</strong><small style="color:var(--cyan);">answered</small></div>
+                <div class="metric"><small style="color:var(--muted);">Leads</small><strong style="display:block;font-size:1.8rem;">Auto</strong><small style="color:var(--cyan);">captured</small></div>
+                <div class="metric"><small style="color:var(--muted);">CRM</small><strong style="display:block;font-size:1.8rem;">Included</strong><small style="color:var(--cyan);">organized</small></div>
+                <div class="metric"><small style="color:var(--muted);">Follow-up</small><strong style="display:block;font-size:1.8rem;">Queued</strong><small style="color:var(--cyan);">tracked</small></div>
               </div>
 
               <div class="routing">
-                <div style="display:flex;justify-content:space-between;color:#cbd5e1;font-size:.92rem;">
+                <div style="display:flex;justify-content:space-between;color:var(--soft);font-size:.92rem;">
                   <span>Moving away from spreadsheets</span>
-                  <span style="color:#bbf7d0;">In progress</span>
+                  <span style="color:var(--emerald);">In progress</span>
                 </div>
                 <div class="bar"><span style="width:92%;"></span></div>
                 <div class="bar"><span style="width:76%;"></span></div>
@@ -1256,6 +1357,41 @@
     );
 
     document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+    const pageScroll = document.getElementById("pageScroll");
+    const progress = document.getElementById("scrollProgress");
+
+    function updateScrollProgress() {
+      const scrollable = pageScroll.scrollHeight - pageScroll.clientHeight;
+      const ratio = scrollable > 0 ? pageScroll.scrollTop / scrollable : 0;
+      progress.style.height = Math.max(8, ratio * 100) + "%";
+    }
+
+    pageScroll.addEventListener("scroll", updateScrollProgress, { passive: true });
+    window.addEventListener("resize", updateScrollProgress);
+    updateScrollProgress();
+
+    const root = document.documentElement;
+    const toggle = document.getElementById("themeToggle");
+    const icon = document.getElementById("themeIcon");
+    const label = document.getElementById("themeLabel");
+
+    function applyTheme(theme) {
+      root.setAttribute("data-theme", theme);
+      localStorage.setItem("konectd-theme", theme);
+      const isLight = theme === "light";
+      icon.textContent = isLight ? "☀" : "☾";
+      label.textContent = isLight ? "Light" : "Dark";
+    }
+
+    const savedTheme = localStorage.getItem("konectd-theme");
+    const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+    applyTheme(savedTheme || (prefersLight ? "light" : "dark"));
+
+    toggle.addEventListener("click", () => {
+      const current = root.getAttribute("data-theme") || "dark";
+      applyTheme(current === "dark" ? "light" : "dark");
+    });
   </script>
 </body>
 </html>
