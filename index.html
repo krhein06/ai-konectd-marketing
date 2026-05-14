@@ -38,7 +38,7 @@
         "@type": "Service",
         "@id": "https://konectd.solutions/marketing#service",
         "name": "AI Front Desk and CRM Implementation",
-        "serviceType": "AI front desk, CRM setup, missed call text back, lead follow-up automation, review requests, and white-glove implementation",
+        "serviceType": "AI front desk, CRM setup, missed call text back, lead follow-up automation, review requests, email marketing, social media marketing, reporting, and white-glove implementation",
         "provider": {
           "@id": "https://konectd.solutions/marketing#organization"
         },
@@ -269,41 +269,39 @@
       }
     }
 
-    .theme-toggle {
+    .promise-bar {
       position: fixed;
-      right: 1rem;
+      left: 50%;
       bottom: 1rem;
-      z-index: 70;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+      z-index: 55;
+      display: none;
+      transform: translateX(-50%);
       border: 1px solid var(--border);
-      background: color-mix(in srgb, var(--surface) 86%, transparent);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
       color: var(--text);
       border-radius: 999px;
-      padding: 0.65rem 0.85rem;
-      font: inherit;
-      font-size: 0.85rem;
-      font-weight: 900;
+      padding: 0.7rem 1rem;
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
-      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 900;
+      gap: 0.8rem;
     }
 
-    .theme-toggle span:first-child {
-      display: grid;
-      width: 1.65rem;
-      height: 1.65rem;
-      place-items: center;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--cyan), var(--violet), var(--emerald));
-      color: white;
-      box-shadow: var(--glow-cyan);
+    .promise-bar span {
+      white-space: nowrap;
     }
 
-    :root[data-theme="light"] .theme-toggle span:first-child {
-      color: #020617;
-      background: linear-gradient(135deg, #fef3c7, #a5f3fc, #ddd6fe);
+    .promise-bar span:not(:last-child)::after {
+      content: "→";
+      margin-left: 0.8rem;
+      color: var(--cyan);
+    }
+
+    @media (min-width: 900px) {
+      .promise-bar {
+        display: flex;
+      }
     }
 
     .header {
@@ -311,7 +309,7 @@
       top: 0;
       left: 0;
       right: 0;
-      z-index: 50;
+      z-index: 80;
       padding: 1rem;
     }
 
@@ -370,13 +368,54 @@
     .nav-links {
       display: none;
       align-items: center;
-      gap: 1.4rem;
+      gap: 1.2rem;
       color: var(--soft);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
 
     .nav-links a:hover {
       color: var(--text);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 0 0 auto;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0.52rem 0.7rem;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .theme-toggle span:first-child {
+      display: grid;
+      width: 1.45rem;
+      height: 1.45rem;
+      place-items: center;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet), var(--emerald));
+      color: white;
+      box-shadow: var(--glow-cyan);
+    }
+
+    :root[data-theme="light"] .theme-toggle span:first-child {
+      color: #020617;
+      background: linear-gradient(135deg, #fef3c7, #a5f3fc, #ddd6fe);
     }
 
     .nav-cta {
@@ -417,6 +456,29 @@
     @media (min-width: 1024px) {
       .nav-links {
         display: flex;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .theme-toggle {
+        padding: 0.5rem;
+      }
+
+      .theme-toggle #themeLabel {
+        display: none;
+      }
+
+      .nav {
+        gap: 0.45rem;
+      }
+
+      .brand-title {
+        font-size: 0.85rem;
+      }
+
+      .brand-mark {
+        width: 2.25rem;
+        height: 2.25rem;
       }
     }
 
@@ -728,7 +790,13 @@
     :root[data-theme="light"] .panel,
     :root[data-theme="light"] .form,
     :root[data-theme="light"] .mini-proof-item,
-    :root[data-theme="light"] .command-card {
+    :root[data-theme="light"] .command-card,
+    :root[data-theme="light"] .calculator-card,
+    :root[data-theme="light"] .before-after,
+    :root[data-theme="light"] .chooser,
+    :root[data-theme="light"] .web-detail,
+    :root[data-theme="light"] .web-stage,
+    :root[data-theme="light"] .web-node {
       background:
         linear-gradient(145deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9)),
         radial-gradient(circle at top right, rgba(8,145,178,0.12), transparent 42%);
@@ -861,6 +929,135 @@
       padding: clamp(1.5rem, 4vw, 3rem);
       box-shadow: var(--shadow);
       backdrop-filter: blur(22px);
+    }
+
+    .calculator-card {
+      display: grid;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.035)),
+        radial-gradient(circle at top right, rgba(251,191,36,0.14), transparent 40%);
+      border-radius: var(--radius-2xl);
+      padding: clamp(1.5rem, 4vw, 3rem);
+      box-shadow: var(--shadow), var(--glow-cyan);
+      backdrop-filter: blur(20px);
+    }
+
+    @media (min-width: 850px) {
+      .calculator-card {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: end;
+      }
+    }
+
+    .calc-result {
+      grid-column: 1 / -1;
+      border: 1px solid rgba(251,191,36,0.25);
+      background: linear-gradient(135deg, rgba(251,191,36,0.14), rgba(103,232,249,0.1));
+      border-radius: 1.5rem;
+      padding: 1.4rem;
+    }
+
+    .calc-result span {
+      display: block;
+      color: var(--soft);
+      font-weight: 800;
+    }
+
+    .calc-result strong {
+      display: block;
+      margin-top: 0.4rem;
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      line-height: 1;
+      letter-spacing: -0.035em;
+      color: var(--text);
+    }
+
+    .before-after,
+    .chooser {
+      margin-top: 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      padding: clamp(1.25rem, 3vw, 2rem);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.035)),
+        radial-gradient(circle at top right, rgba(196,181,253,0.13), transparent 38%);
+      box-shadow: var(--shadow), var(--glow-violet);
+      backdrop-filter: blur(20px);
+    }
+
+    .ba-tabs,
+    .chooser-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .ba-tab,
+    .choice-btn {
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 80%, transparent);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0.8rem 1rem;
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .ba-tab:hover,
+    .choice-btn:hover,
+    .ba-tab.active,
+    .choice-btn.active {
+      transform: translateY(-2px);
+      border-color: rgba(103,232,249,0.5);
+      background: linear-gradient(135deg, rgba(103,232,249,0.18), rgba(196,181,253,0.15), rgba(110,231,183,0.12));
+      box-shadow: var(--glow-cyan);
+    }
+
+    .ba-panel,
+    .choice-panel {
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      background: color-mix(in srgb, var(--surface) 70%, transparent);
+      padding: 1.4rem;
+    }
+
+    .ba-panel ul,
+    .choice-panel ul {
+      display: grid;
+      gap: 0.75rem;
+      padding: 0;
+      margin: 1rem 0 0;
+      list-style: none;
+    }
+
+    .ba-panel li,
+    .choice-panel li {
+      display: flex;
+      gap: 0.65rem;
+      color: var(--soft);
+      line-height: 1.45;
+      font-weight: 750;
+    }
+
+    .ba-panel li::before,
+    .choice-panel li::before {
+      content: "✓";
+      display: grid;
+      width: 1.35rem;
+      height: 1.35rem;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--emerald));
+      color: #020617;
+      font-size: 0.8rem;
+      font-weight: 1000;
     }
 
     .system-web {
@@ -1057,19 +1254,6 @@
       font-weight: 1000;
     }
 
-    :root[data-theme="light"] .web-stage,
-    :root[data-theme="light"] .web-detail,
-    :root[data-theme="light"] .web-node {
-      background:
-        linear-gradient(145deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9)),
-        radial-gradient(circle at top right, rgba(8,145,178,0.12), transparent 42%);
-      border-color: rgba(15,23,42,0.16);
-    }
-
-    :root[data-theme="light"] .web-node small {
-      color: #475569;
-    }
-
     .form {
       max-width: 780px;
       margin: 2rem auto 0;
@@ -1259,7 +1443,10 @@
       .card,
       .panel,
       .web-detail,
-      .web-stage {
+      .web-stage,
+      .calculator-card,
+      .before-after,
+      .chooser {
         border-radius: 1.5rem;
       }
 
@@ -1267,9 +1454,8 @@
         width: 100%;
       }
 
-      .theme-toggle {
-        right: 0.75rem;
-        bottom: 0.75rem;
+      .promise-bar {
+        display: none;
       }
     }
   </style>
@@ -1283,10 +1469,12 @@
     <div class="scroll-progress" id="scrollProgress"></div>
   </div>
 
-  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme">
-    <span id="themeIcon">☾</span>
-    <span id="themeLabel">Dark</span>
-  </button>
+  <div class="promise-bar" aria-hidden="true">
+    <span>We answer the call.</span>
+    <span>Capture the lead.</span>
+    <span>Put it in your CRM.</span>
+    <span>Follow up.</span>
+  </div>
 
   <div class="page" id="pageScroll">
     <header class="header">
@@ -1301,16 +1489,23 @@
 
         <div class="nav-links">
           <a href="#problem">Problem</a>
+          <a href="#calculator">Calculator</a>
           <a href="#offer">What You Get</a>
           <a href="#system">System</a>
-          <a href="#setup">Setup</a>
           <a href="#contact">Audit</a>
         </div>
 
-        <a href="#contact" class="nav-cta">
-          <span class="desktop">Book Audit</span>
-          <span class="mobile">Audit</span>
-        </a>
+        <div class="nav-actions">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme">
+            <span id="themeIcon">☾</span>
+            <span id="themeLabel">Dark</span>
+          </button>
+
+          <a href="#contact" class="nav-cta">
+            <span class="desktop">Book Audit</span>
+            <span class="mobile">Audit</span>
+          </a>
+        </div>
       </nav>
     </header>
 
@@ -1351,7 +1546,7 @@
 
             <div class="cta-row">
               <a class="btn btn-primary" href="#contact">Find My Missed Jobs →</a>
-              <a class="btn btn-secondary" href="#offer">What Do I Get?</a>
+              <a class="btn btn-secondary" href="#calculator">Calculate Missed Revenue</a>
             </div>
           </div>
 
@@ -1439,6 +1634,41 @@
         </div>
       </section>
 
+      <section id="calculator" class="section snap-section">
+        <div class="container">
+          <div class="reveal" style="max-width:900px;">
+            <div class="color-band"><div class="eyebrow">Missed jobs calculator</div></div>
+            <h2>What are missed calls costing you?</h2>
+            <p class="lead">
+              Use rough numbers. Even a few missed calls each week can turn into real lost revenue.
+            </p>
+            <div class="accent-line"></div>
+          </div>
+
+          <div class="calculator-card reveal">
+            <label>
+              Missed calls per week
+              <input id="missedCalls" type="number" min="0" value="5" />
+            </label>
+
+            <label>
+              Average job value
+              <input id="jobValue" type="number" min="0" value="500" />
+            </label>
+
+            <label>
+              Close rate %
+              <input id="closeRate" type="number" min="0" max="100" value="30" />
+            </label>
+
+            <div class="calc-result">
+              <span>Estimated monthly missed revenue</span>
+              <strong id="missedRevenue">$3,248</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="offer" class="section snap-section">
         <div class="container">
           <div class="reveal" style="max-width:900px;">
@@ -1522,6 +1752,71 @@
                 <span class="pill">Follow-up visibility</span>
               </div>
             </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="before-after" class="section snap-section">
+        <div class="container">
+          <div class="reveal" style="max-width:900px;">
+            <div class="color-band"><div class="eyebrow">Before and after</div></div>
+            <h2>See what changes when the system is installed.</h2>
+            <p class="lead">
+              The goal is not more software. The goal is fewer dropped balls.
+            </p>
+            <div class="accent-line"></div>
+          </div>
+
+          <div class="before-after reveal">
+            <div class="ba-tabs">
+              <button class="ba-tab active" type="button" data-ba="before">Before Konectd</button>
+              <button class="ba-tab" type="button" data-ba="after">After Konectd</button>
+            </div>
+
+            <div class="ba-panel" id="baPanel">
+              <h3>Before Konectd</h3>
+              <ul>
+                <li>Calls get missed when the team is busy</li>
+                <li>Customer info lives in spreadsheets</li>
+                <li>Follow-up depends on memory</li>
+                <li>Reviews are requested inconsistently</li>
+                <li>The owner does not know what is slipping</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="chooser" class="section snap-section">
+        <div class="container">
+          <div class="reveal" style="max-width:900px;">
+            <div class="color-band"><div class="eyebrow">Choose your biggest problem</div></div>
+            <h2>Tell us where it hurts. We’ll show the first move.</h2>
+            <p class="lead">
+              Most businesses do not need everything fixed on day one. They need the first leak fixed fast.
+            </p>
+            <div class="accent-line"></div>
+          </div>
+
+          <div class="chooser reveal">
+            <div class="chooser-buttons">
+              <button class="choice-btn active" type="button" data-choice="calls">I miss calls</button>
+              <button class="choice-btn" type="button" data-choice="crm">My spreadsheets are messy</button>
+              <button class="choice-btn" type="button" data-choice="followup">Follow-up gets forgotten</button>
+              <button class="choice-btn" type="button" data-choice="reviews">I need more reviews</button>
+              <button class="choice-btn" type="button" data-choice="visibility">I do not know what is happening</button>
+            </div>
+
+            <div class="choice-panel" id="choicePanel">
+              <h3>Start with AI Voice Receptionist + missed-call text-back.</h3>
+              <p class="copy">Every caller gets answered, captured, and routed into the CRM so fewer jobs disappear into voicemail.</p>
+              <ul>
+                <li>Capture name, number, service, location, and urgency</li>
+                <li>Send missed-call text-back when your team is busy</li>
+                <li>Push call details into the CRM</li>
+                <li>Notify the right person for the next step</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -1843,6 +2138,144 @@
     toggle.addEventListener("click", () => {
       const current = root.getAttribute("data-theme") || "dark";
       applyTheme(current === "dark" ? "light" : "dark");
+    });
+
+    const missedCalls = document.getElementById("missedCalls");
+    const jobValue = document.getElementById("jobValue");
+    const closeRate = document.getElementById("closeRate");
+    const missedRevenue = document.getElementById("missedRevenue");
+
+    function updateMissedRevenue() {
+      if (!missedCalls || !jobValue || !closeRate || !missedRevenue) return;
+
+      const calls = Number(missedCalls.value || 0);
+      const value = Number(jobValue.value || 0);
+      const rate = Number(closeRate.value || 0) / 100;
+      const weekly = calls * value * rate;
+      const monthly = weekly * 4.33;
+
+      missedRevenue.textContent = monthly.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0
+      });
+    }
+
+    [missedCalls, jobValue, closeRate].forEach(input => {
+      if (input) input.addEventListener("input", updateMissedRevenue);
+    });
+
+    updateMissedRevenue();
+
+    const baContent = {
+      before: {
+        title: "Before Konectd",
+        items: [
+          "Calls get missed when the team is busy",
+          "Customer info lives in spreadsheets",
+          "Follow-up depends on memory",
+          "Reviews are requested inconsistently",
+          "The owner does not know what is slipping"
+        ]
+      },
+      after: {
+        title: "After Konectd",
+        items: [
+          "AI front desk answers and captures details",
+          "CRM keeps customer info organized",
+          "Follow-up tasks are tracked",
+          "Happy customers are asked for reviews",
+          "Owner dashboard shows what is happening"
+        ]
+      }
+    };
+
+    const baTabs = document.querySelectorAll(".ba-tab");
+    const baPanel = document.getElementById("baPanel");
+
+    baTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const key = tab.dataset.ba;
+        const data = baContent[key];
+
+        baTabs.forEach(t => t.classList.toggle("active", t === tab));
+
+        baPanel.innerHTML = `
+          <h3>${data.title}</h3>
+          <ul>${data.items.map(item => `<li>${item}</li>`).join("")}</ul>
+        `;
+      });
+    });
+
+    const choiceData = {
+      calls: {
+        title: "Start with AI Voice Receptionist + missed-call text-back.",
+        copy: "Every caller gets answered, captured, and routed into the CRM so fewer jobs disappear into voicemail.",
+        list: [
+          "Capture name, number, service, location, and urgency",
+          "Send missed-call text-back when your team is busy",
+          "Push call details into the CRM",
+          "Notify the right person for the next step"
+        ]
+      },
+      crm: {
+        title: "Start with CRM setup.",
+        copy: "We move customer info, lead status, notes, and follow-up out of spreadsheets and into one cleaner system.",
+        list: [
+          "Create contact and lead records",
+          "Set up lead stages and next steps",
+          "Organize notes, jobs, and appointments",
+          "Train the team to use the CRM"
+        ]
+      },
+      followup: {
+        title: "Start with follow-up workflows.",
+        copy: "We make sure leads, estimates, appointments, and past customers do not rely on someone remembering.",
+        list: [
+          "Track estimate follow-up",
+          "Create reminders for the team",
+          "Set reactivation workflows",
+          "Show open follow-up in the dashboard"
+        ]
+      },
+      reviews: {
+        title: "Start with reputation workflows.",
+        copy: "We help turn happy customers into public trust so buyers see stronger proof when they compare you.",
+        list: [
+          "Ask happy customers for reviews",
+          "Draft review responses",
+          "Track review activity",
+          "Connect reviews back to customer activity"
+        ]
+      },
+      visibility: {
+        title: "Start with reporting and owner visibility.",
+        copy: "We make calls, leads, CRM activity, reviews, and follow-up easier to see so you can stop guessing.",
+        list: [
+          "Show leads and calls in one place",
+          "Track CRM and follow-up activity",
+          "Monitor review movement",
+          "Give ownership a clearer operating view"
+        ]
+      }
+    };
+
+    const choiceButtons = document.querySelectorAll(".choice-btn");
+    const choicePanel = document.getElementById("choicePanel");
+
+    choiceButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        const key = button.dataset.choice;
+        const data = choiceData[key];
+
+        choiceButtons.forEach(b => b.classList.toggle("active", b === button));
+
+        choicePanel.innerHTML = `
+          <h3>${data.title}</h3>
+          <p class="copy">${data.copy}</p>
+          <ul>${data.list.map(item => `<li>${item}</li>`).join("")}</ul>
+        `;
+      });
     });
 
     const systemData = {
