@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -96,25 +96,27 @@
   <style>
     :root {
       --bg: #050814;
+      --text: #ffffff;
+      --soft: #cbd5e1;
+      --muted: #94a3b8;
+      --surface: rgba(2, 6, 23, 0.78);
       --panel: rgba(255, 255, 255, 0.055);
       --panel-strong: rgba(15, 23, 42, 0.72);
-      --border: rgba(255, 255, 255, 0.11);
-      --text: #ffffff;
-      --muted: #94a3b8;
-      --soft: #cbd5e1;
-      --surface: rgba(2, 6, 23, 0.78);
-      --input: rgba(2,6,23,0.75);
+      --input: rgba(2, 6, 23, 0.75);
+      --border: rgba(255, 255, 255, 0.12);
+
       --cyan: #67e8f9;
       --violet: #c4b5fd;
       --emerald: #6ee7b7;
       --amber: #fbbf24;
       --rose: #fb7185;
-      --blue: #60a5fa;
       --red: #fecaca;
+
       --shadow: 0 40px 120px rgba(0, 0, 0, 0.45);
       --glow-cyan: 0 0 60px rgba(34, 211, 238, 0.24);
       --glow-violet: 0 0 70px rgba(167, 139, 250, 0.2);
       --glow-emerald: 0 0 70px rgba(52, 211, 153, 0.18);
+
       --radius-xl: 2rem;
       --radius-2xl: 3rem;
       --max: 1180px;
@@ -122,21 +124,22 @@
 
     :root[data-theme="light"] {
       --bg: #f8fafc;
-      --panel: rgba(255, 255, 255, 0.78);
-      --panel-strong: rgba(255, 255, 255, 0.88);
-      --border: rgba(15, 23, 42, 0.12);
       --text: #07111f;
-      --muted: #475569;
-      --soft: #334155;
-      --surface: rgba(255,255,255,0.86);
-      --input: rgba(255,255,255,0.92);
+      --soft: #111827;
+      --muted: #1f2937;
+      --surface: rgba(255, 255, 255, 0.94);
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-strong: rgba(255, 255, 255, 0.96);
+      --input: rgba(255, 255, 255, 0.98);
+      --border: rgba(15, 23, 42, 0.16);
+
       --cyan: #0891b2;
       --violet: #7c3aed;
       --emerald: #059669;
       --amber: #d97706;
       --rose: #e11d48;
-      --blue: #2563eb;
       --red: #991b1b;
+
       --shadow: 0 35px 90px rgba(15, 23, 42, 0.14);
       --glow-cyan: 0 0 55px rgba(8, 145, 178, 0.18);
       --glow-violet: 0 0 60px rgba(124, 58, 237, 0.16);
@@ -157,7 +160,7 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg);
       color: var(--text);
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     body::before {
@@ -173,7 +176,7 @@
         radial-gradient(circle at 18% 12%, rgba(251, 113, 133, 0.13), transparent 26%),
         linear-gradient(color-mix(in srgb, var(--text) 4%, transparent) 1px, transparent 1px),
         linear-gradient(90deg, color-mix(in srgb, var(--text) 4%, transparent) 1px, transparent 1px);
-      background-size: auto, auto, auto, 44px 44px, 44px 44px;
+      background-size: auto, auto, auto, auto, auto, 44px 44px, 44px 44px;
       z-index: -2;
     }
 
@@ -184,6 +187,11 @@
       pointer-events: none;
       background: radial-gradient(circle at center, transparent 0%, color-mix(in srgb, var(--bg) 10%, transparent) 65%, color-mix(in srgb, var(--bg) 48%, transparent) 100%);
       z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
     .aurora {
@@ -206,6 +214,27 @@
       height: 28rem;
       animation-duration: 19s;
       animation-delay: -5s;
+    }
+
+    .page {
+      height: 100dvh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    @media (min-width: 1024px) {
+      .page {
+        scroll-snap-type: y mandatory;
+      }
+
+      .snap-section {
+        min-height: 100dvh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: flex;
+        align-items: center;
+      }
     }
 
     .scroll-rail {
@@ -268,124 +297,13 @@
       place-items: center;
       border-radius: 999px;
       background: linear-gradient(135deg, var(--cyan), var(--violet), var(--emerald));
-      color: var(--text);
+      color: white;
       box-shadow: var(--glow-cyan);
     }
 
     :root[data-theme="light"] .theme-toggle span:first-child {
       color: #020617;
       background: linear-gradient(135deg, #fef3c7, #a5f3fc, #ddd6fe);
-    }
-
-
-    .section::before {
-      content: "";
-      position: absolute;
-      inset: 12% auto auto 4%;
-      width: 10rem;
-      height: 10rem;
-      border-radius: 999px;
-      background: rgba(103,232,249,0.08);
-      filter: blur(46px);
-      pointer-events: none;
-    }
-
-    .section:nth-of-type(odd)::before {
-      left: auto;
-      right: 5%;
-      background: rgba(196,181,253,0.09);
-    }
-
-    .color-band {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      border-radius: 999px;
-      padding: 0.4rem;
-      background: linear-gradient(90deg, rgba(103,232,249,0.18), rgba(196,181,253,0.18), rgba(110,231,183,0.18), rgba(251,191,36,0.15));
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: var(--glow-cyan);
-    }
-
-    .gradient-text {
-      background: linear-gradient(100deg, var(--text) 0%, var(--cyan) 28%, var(--violet) 58%, var(--emerald) 82%, var(--text) 100%);
-      background-size: 180% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: shimmerText 7s ease-in-out infinite alternate;
-    }
-
-    .accent-line {
-      width: min(100%, 30rem);
-      height: 4px;
-      margin-top: 1.5rem;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--emerald), var(--amber));
-      box-shadow: var(--glow-cyan);
-    }
-
-    .mini-proof {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-      margin-top: 1.6rem;
-      max-width: 720px;
-    }
-
-    @media (min-width: 700px) {
-      .mini-proof {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    .mini-proof-item {
-      border: 1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025));
-      border-radius: 1.25rem;
-      padding: 1rem;
-      backdrop-filter: blur(16px);
-    }
-
-    .mini-proof-item strong {
-      display: block;
-      font-size: 1.35rem;
-      color: var(--text);
-      letter-spacing: -0.04em;
-    }
-
-    .mini-proof-item span {
-      display: block;
-      margin-top: 0.25rem;
-      color: #cbd5e1;
-      font-size: 0.85rem;
-      line-height: 1.35;
-    }
-
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .page {
-      min-height: 100vh;
-    }
-
-    @media (min-width: 1024px) {
-      .page {
-        height: 100dvh;
-        overflow-y: auto;
-        scroll-snap-type: y mandatory;
-      }
-
-      .snap-section {
-        min-height: 100dvh;
-        scroll-snap-align: start;
-        scroll-snap-stop: always;
-        display: flex;
-        align-items: center;
-      }
     }
 
     .header {
@@ -453,7 +371,7 @@
       display: none;
       align-items: center;
       gap: 1.4rem;
-      color: #cbd5e1;
+      color: var(--soft);
       font-size: 0.92rem;
     }
 
@@ -464,8 +382,9 @@
     .nav-cta {
       flex: 0 0 auto;
       border-radius: 999px;
-      background: white;
+      background: linear-gradient(135deg, #ffffff, #a5f3fc 35%, #c4b5fd 72%, #bbf7d0);
       color: #020617;
+      box-shadow: 0 0 50px rgba(103,232,249,0.32);
       padding: 0.72rem 1rem;
       font-size: 0.9rem;
       font-weight: 900;
@@ -506,6 +425,24 @@
       padding: 5.5rem 1rem;
       position: relative;
       z-index: 2;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: 12% auto auto 4%;
+      width: 10rem;
+      height: 10rem;
+      border-radius: 999px;
+      background: rgba(103,232,249,0.08);
+      filter: blur(46px);
+      pointer-events: none;
+    }
+
+    .section:nth-of-type(odd)::before {
+      left: auto;
+      right: 5%;
+      background: rgba(196,181,253,0.09);
     }
 
     .hero {
@@ -551,17 +488,28 @@
       }
     }
 
+    .color-band {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border-radius: 999px;
+      padding: 0.4rem;
+      background: linear-gradient(90deg, rgba(103,232,249,0.18), rgba(196,181,253,0.18), rgba(110,231,183,0.18), rgba(251,191,36,0.15));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: var(--glow-cyan);
+    }
+
     .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
       border: 1px solid rgba(103, 232, 249, 0.22);
       background: rgba(103, 232, 249, 0.1);
-      color: #cffafe;
+      color: var(--cyan);
       border-radius: 999px;
       padding: 0.55rem 0.9rem;
       font-size: 0.9rem;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     h1,
@@ -574,7 +522,7 @@
     h1 {
       margin-top: 1.6rem;
       max-width: 960px;
-      font-size: clamp(3.1rem, 10vw, 8.8rem);
+      font-size: clamp(3rem, 9vw, 8.2rem);
       line-height: 0.96;
       letter-spacing: -0.045em;
       font-weight: 950;
@@ -595,10 +543,19 @@
       font-weight: 900;
     }
 
+    .gradient-text {
+      background: linear-gradient(100deg, var(--text) 0%, var(--cyan) 28%, var(--violet) 58%, var(--emerald) 82%, var(--text) 100%);
+      background-size: 180% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmerText 7s ease-in-out infinite alternate;
+    }
+
     .lead {
       margin-top: 1.6rem;
       max-width: 720px;
-      color: #cbd5e1;
+      color: var(--soft);
       font-size: clamp(1.12rem, 2vw, 1.45rem);
       line-height: 1.55;
     }
@@ -606,7 +563,7 @@
     .strong-line {
       margin-top: 1.15rem;
       max-width: 720px;
-      color: #cffafe;
+      color: var(--cyan);
       font-size: 1.12rem;
       line-height: 1.55;
       font-weight: 900;
@@ -616,6 +573,15 @@
       color: var(--muted);
       line-height: 1.65;
       font-size: 1rem;
+    }
+
+    .accent-line {
+      width: min(100%, 30rem);
+      height: 4px;
+      margin-top: 1.5rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--emerald), var(--amber));
+      box-shadow: var(--glow-cyan);
     }
 
     .cta-row {
@@ -655,10 +621,47 @@
     }
 
     .btn-secondary {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(103,232,249,0.08));
       color: var(--text);
       backdrop-filter: blur(12px);
+    }
+
+    .mini-proof {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-top: 1.6rem;
+      max-width: 720px;
+    }
+
+    @media (min-width: 700px) {
+      .mini-proof {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .mini-proof-item {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025));
+      border-radius: 1.25rem;
+      padding: 1rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .mini-proof-item strong {
+      display: block;
+      font-size: 1.35rem;
+      color: var(--text);
+      letter-spacing: -0.04em;
+    }
+
+    .mini-proof-item span {
+      display: block;
+      margin-top: 0.25rem;
+      color: var(--soft);
+      font-size: 0.85rem;
+      line-height: 1.35;
     }
 
     .card {
@@ -676,7 +679,6 @@
       transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
       height: 100%;
     }
-
 
     .grid .card:nth-child(3n+1) {
       box-shadow: var(--shadow), var(--glow-cyan);
@@ -722,15 +724,15 @@
       margin-top: 0.8rem;
     }
 
-    .red-box {
-      margin-top: 1.25rem;
-      border: 1px solid rgba(252, 165, 165, 0.16);
-      background: rgba(252, 165, 165, 0.06);
-      color: var(--red);
-      border-radius: 1.2rem;
-      padding: 1rem;
-      line-height: 1.55;
-      font-size: 0.92rem;
+    :root[data-theme="light"] .card,
+    :root[data-theme="light"] .panel,
+    :root[data-theme="light"] .form,
+    :root[data-theme="light"] .mini-proof-item,
+    :root[data-theme="light"] .command-card {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9)),
+        radial-gradient(circle at top right, rgba(8,145,178,0.12), transparent 42%);
+      border-color: rgba(15,23,42,0.16);
     }
 
     .pill-row {
@@ -743,7 +745,7 @@
     .pill {
       border: 1px solid rgba(255,255,255,0.13);
       background: linear-gradient(135deg, rgba(103,232,249,0.12), rgba(196,181,253,0.1));
-      color: #e2e8f0;
+      color: var(--soft);
       border-radius: 999px;
       padding: 0.55rem 0.75rem;
       font-size: 0.78rem;
@@ -763,9 +765,16 @@
         linear-gradient(135deg, rgba(103,232,249,0.13), rgba(196,181,253,0.12), rgba(110,231,183,0.1));
       border-radius: 999px;
       padding: 0.85rem 1.1rem;
-      color: #fff;
+      color: var(--text);
       font-weight: 950;
       backdrop-filter: blur(14px);
+    }
+
+    :root[data-theme="light"] .pill,
+    :root[data-theme="light"] .industry-pill {
+      color: #0f172a;
+      background: linear-gradient(135deg, rgba(236,254,255,0.92), rgba(245,243,255,0.92), rgba(236,253,245,0.9));
+      border-color: rgba(15,23,42,0.14);
     }
 
     .command-wrap {
@@ -854,6 +863,213 @@
       backdrop-filter: blur(22px);
     }
 
+    .system-web {
+      display: grid;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .system-web {
+        grid-template-columns: 1.05fr 0.95fr;
+      }
+    }
+
+    .web-stage {
+      position: relative;
+      min-height: 34rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      background:
+        radial-gradient(circle at center, rgba(103,232,249,0.13), transparent 24%),
+        radial-gradient(circle at 24% 20%, rgba(196,181,253,0.14), transparent 28%),
+        radial-gradient(circle at 84% 78%, rgba(110,231,183,0.12), transparent 28%),
+        rgba(255,255,255,0.035);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+    }
+
+    .web-stage::before {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border: 1px dashed color-mix(in srgb, var(--text) 18%, transparent);
+      border-radius: 999px;
+      animation: webRotate 38s linear infinite;
+    }
+
+    .web-stage::after {
+      content: "";
+      position: absolute;
+      inset: 25%;
+      border: 1px dashed color-mix(in srgb, var(--text) 14%, transparent);
+      border-radius: 999px;
+      animation: webRotate 30s linear infinite reverse;
+    }
+
+    .web-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.72;
+    }
+
+    .web-lines line {
+      stroke: url(#webGradient);
+      stroke-width: 2;
+      stroke-dasharray: 8 10;
+      animation: dashMove 15s linear infinite;
+    }
+
+    .web-node {
+      position: absolute;
+      z-index: 3;
+      display: grid;
+      width: 8.5rem;
+      min-height: 5.5rem;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 1.4rem;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.11), rgba(255,255,255,0.045)),
+        radial-gradient(circle at top right, rgba(103,232,249,0.18), transparent 48%);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+      text-align: center;
+      padding: 0.85rem;
+      font: inherit;
+      font-weight: 950;
+      line-height: 1.12;
+    }
+
+    .web-node small {
+      display: block;
+      margin-top: 0.25rem;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .web-node:hover,
+    .web-node.active {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: rgba(103,232,249,0.55);
+      box-shadow: var(--shadow), var(--glow-cyan);
+      background:
+        linear-gradient(135deg, rgba(103,232,249,0.24), rgba(196,181,253,0.18), rgba(110,231,183,0.16)),
+        rgba(255,255,255,0.08);
+    }
+
+    .web-node.center {
+      left: 50%;
+      top: 50%;
+      width: 10rem;
+      min-height: 7rem;
+      border-radius: 2rem;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.2), rgba(103,232,249,0.16), rgba(196,181,253,0.16)),
+        rgba(255,255,255,0.08);
+      box-shadow: var(--shadow), var(--glow-cyan);
+      font-size: 1.25rem;
+    }
+
+    .web-node.voice { left: 50%; top: 14%; }
+    .web-node.chat { left: 82%; top: 30%; }
+    .web-node.reputation { left: 82%; top: 70%; }
+    .web-node.email { left: 50%; top: 86%; }
+    .web-node.social { left: 18%; top: 70%; }
+    .web-node.reporting { left: 18%; top: 30%; }
+
+    .web-detail {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.035)),
+        radial-gradient(circle at top right, rgba(196,181,253,0.14), transparent 38%);
+      box-shadow: var(--shadow);
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      backdrop-filter: blur(20px);
+    }
+
+    .web-detail-kicker {
+      display: inline-flex;
+      border: 1px solid rgba(103,232,249,0.22);
+      background: rgba(103,232,249,0.1);
+      color: var(--cyan);
+      border-radius: 999px;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .web-detail h3 {
+      margin-top: 1rem;
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+
+    .web-detail p {
+      margin-top: 1rem;
+      color: var(--soft);
+      line-height: 1.65;
+      font-size: 1.08rem;
+    }
+
+    .web-detail-list {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding: 0;
+      list-style: none;
+    }
+
+    .web-detail-list li {
+      display: flex;
+      gap: 0.65rem;
+      align-items: flex-start;
+      color: var(--soft);
+      line-height: 1.45;
+      font-weight: 750;
+    }
+
+    .web-detail-list li::before {
+      content: "✓";
+      display: grid;
+      width: 1.35rem;
+      height: 1.35rem;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--emerald));
+      color: #020617;
+      font-size: 0.8rem;
+      font-weight: 1000;
+    }
+
+    :root[data-theme="light"] .web-stage,
+    :root[data-theme="light"] .web-detail,
+    :root[data-theme="light"] .web-node {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9)),
+        radial-gradient(circle at top right, rgba(8,145,178,0.12), transparent 42%);
+      border-color: rgba(15,23,42,0.16);
+    }
+
+    :root[data-theme="light"] .web-node small {
+      color: #475569;
+    }
+
     .form {
       max-width: 780px;
       margin: 2rem auto 0;
@@ -879,7 +1095,7 @@
 
     label {
       display: block;
-      color: #cbd5e1;
+      color: var(--soft);
       font-weight: 800;
       font-size: 0.9rem;
     }
@@ -910,6 +1126,19 @@
       resize: vertical;
     }
 
+    :root[data-theme="light"] input,
+    :root[data-theme="light"] select,
+    :root[data-theme="light"] textarea {
+      color: #0f172a;
+      background: #ffffff;
+      border-color: rgba(15, 23, 42, 0.18);
+    }
+
+    :root[data-theme="light"] input::placeholder,
+    :root[data-theme="light"] textarea::placeholder {
+      color: #64748b;
+    }
+
     .reveal {
       opacity: 0;
       transform: translateY(44px) scale(0.98);
@@ -919,6 +1148,14 @@
     .reveal.visible {
       opacity: 1;
       transform: translateY(0) scale(1);
+    }
+
+    @keyframes dashMove {
+      to { stroke-dashoffset: -180; }
+    }
+
+    @keyframes webRotate {
+      to { transform: rotate(360deg); }
     }
 
     @keyframes driftAurora {
@@ -961,7 +1198,56 @@
       }
     }
 
+    @media (max-width: 700px) {
+      .web-stage {
+        min-height: auto;
+        display: grid;
+        gap: 0.75rem;
+        padding: 1rem;
+      }
+
+      .web-stage::before,
+      .web-stage::after,
+      .web-lines {
+        display: none;
+      }
+
+      .web-node,
+      .web-node.center,
+      .web-node.voice,
+      .web-node.chat,
+      .web-node.reputation,
+      .web-node.email,
+      .web-node.social,
+      .web-node.reporting {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: 100%;
+        min-height: auto;
+        transform: none;
+        border-radius: 1.25rem;
+        justify-content: start;
+        text-align: left;
+      }
+
+      .web-node:hover,
+      .web-node.active {
+        transform: scale(1.01);
+      }
+    }
+
     @media (max-width: 639px) {
+      body {
+        overflow: auto;
+      }
+
+      .page {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+      }
+
       .section {
         padding-block: 5rem;
       }
@@ -971,12 +1257,19 @@
       }
 
       .card,
-      .panel {
+      .panel,
+      .web-detail,
+      .web-stage {
         border-radius: 1.5rem;
       }
 
       .btn {
         width: 100%;
+      }
+
+      .theme-toggle {
+        right: 0.75rem;
+        bottom: 0.75rem;
       }
     }
   </style>
@@ -985,11 +1278,16 @@
 <body>
   <div class="aurora"></div>
   <div class="aurora two"></div>
-  <div class="scroll-rail" aria-hidden="true"><div class="scroll-progress" id="scrollProgress"></div></div>
+
+  <div class="scroll-rail" aria-hidden="true">
+    <div class="scroll-progress" id="scrollProgress"></div>
+  </div>
+
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme">
     <span id="themeIcon">☾</span>
     <span id="themeLabel">Dark</span>
   </button>
+
   <div class="page" id="pageScroll">
     <header class="header">
       <nav class="nav" aria-label="Primary navigation">
@@ -1004,6 +1302,7 @@
         <div class="nav-links">
           <a href="#problem">Problem</a>
           <a href="#offer">What You Get</a>
+          <a href="#system">System</a>
           <a href="#setup">Setup</a>
           <a href="#contact">Audit</a>
         </div>
@@ -1019,20 +1318,37 @@
       <section id="top" class="section hero snap-section">
         <div class="container grid hero-grid">
           <div class="reveal">
-            <div class="color-band"><div class="eyebrow">☎ For service businesses that depend on calls, bookings, and follow-up</div></div>
+            <div class="color-band">
+              <div class="eyebrow">☎ For service businesses that depend on calls, bookings, and follow-up</div>
+            </div>
+
             <h1><span class="gradient-text">Stop missing calls.</span><br />Stop losing jobs.</h1>
+
             <p class="lead">
               Konectd gives your business an AI front desk and a CRM. We answer customers faster, capture their info, book the next step, follow up, ask for reviews, and show you what is being missed.
             </p>
+
             <p class="strong-line">
               No DIY bot builder. No spreadsheet chaos. We set it up for you.
             </p>
+
             <div class="accent-line"></div>
+
             <div class="mini-proof">
-              <div class="mini-proof-item"><strong>24/7</strong><span>AI front desk coverage when your team is busy.</span></div>
-              <div class="mini-proof-item"><strong>CRM</strong><span>Included so customer info stops living in sheets.</span></div>
-              <div class="mini-proof-item"><strong>Done-for-you</strong><span>We set up, train, launch, and tune it.</span></div>
+              <div class="mini-proof-item">
+                <strong>24/7</strong>
+                <span>AI front desk coverage when your team is busy.</span>
+              </div>
+              <div class="mini-proof-item">
+                <strong>CRM</strong>
+                <span>Included so customer info stops living in sheets.</span>
+              </div>
+              <div class="mini-proof-item">
+                <strong>Done-for-you</strong>
+                <span>We set up, train, launch, and tune it.</span>
+              </div>
             </div>
+
             <div class="cta-row">
               <a class="btn btn-primary" href="#contact">Find My Missed Jobs →</a>
               <a class="btn btn-secondary" href="#offer">What Do I Get?</a>
@@ -1051,10 +1367,29 @@
               </div>
 
               <div class="metric-grid">
-                <div class="metric"><small style="color:var(--muted);">Calls</small><strong style="display:block;font-size:1.8rem;">24/7</strong><small style="color:var(--cyan);">answered</small></div>
-                <div class="metric"><small style="color:var(--muted);">Leads</small><strong style="display:block;font-size:1.8rem;">Auto</strong><small style="color:var(--cyan);">captured</small></div>
-                <div class="metric"><small style="color:var(--muted);">CRM</small><strong style="display:block;font-size:1.8rem;">Included</strong><small style="color:var(--cyan);">organized</small></div>
-                <div class="metric"><small style="color:var(--muted);">Follow-up</small><strong style="display:block;font-size:1.8rem;">Queued</strong><small style="color:var(--cyan);">tracked</small></div>
+                <div class="metric">
+                  <small style="color:var(--muted);">Calls</small>
+                  <strong style="display:block;font-size:1.8rem;">24/7</strong>
+                  <small style="color:var(--cyan);">answered</small>
+                </div>
+
+                <div class="metric">
+                  <small style="color:var(--muted);">Leads</small>
+                  <strong style="display:block;font-size:1.8rem;">Auto</strong>
+                  <small style="color:var(--cyan);">captured</small>
+                </div>
+
+                <div class="metric">
+                  <small style="color:var(--muted);">CRM</small>
+                  <strong style="display:block;font-size:1.8rem;">Included</strong>
+                  <small style="color:var(--cyan);">organized</small>
+                </div>
+
+                <div class="metric">
+                  <small style="color:var(--muted);">Follow-up</small>
+                  <strong style="display:block;font-size:1.8rem;">Queued</strong>
+                  <small style="color:var(--cyan);">tracked</small>
+                </div>
               </div>
 
               <div class="routing">
@@ -1219,6 +1554,88 @@
         </div>
       </section>
 
+      <section id="system" class="section snap-section">
+        <div class="container">
+          <div class="reveal" style="max-width:900px;">
+            <div class="color-band"><div class="eyebrow">Interactive system map</div></div>
+            <h2>Start with the CRM. Add the pieces that grow the business.</h2>
+            <p class="lead">
+              Konectd is not one disconnected tool. It is a connected system around your CRM: voice, chat, reputation, email, social, and reporting all feed the same customer picture.
+            </p>
+            <div class="accent-line"></div>
+          </div>
+
+          <div class="system-web reveal">
+            <div class="web-stage" aria-label="Interactive Konectd system map">
+              <svg class="web-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="webGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#67e8f9" />
+                    <stop offset="45%" stop-color="#c4b5fd" />
+                    <stop offset="100%" stop-color="#6ee7b7" />
+                  </linearGradient>
+                </defs>
+                <line x1="50" y1="50" x2="50" y2="14" />
+                <line x1="50" y1="50" x2="82" y2="30" />
+                <line x1="50" y1="50" x2="82" y2="70" />
+                <line x1="50" y1="50" x2="50" y2="86" />
+                <line x1="50" y1="50" x2="18" y2="70" />
+                <line x1="50" y1="50" x2="18" y2="30" />
+              </svg>
+
+              <button class="web-node center active" type="button" data-system="crm">
+                CRM Core
+                <small>The source of truth</small>
+              </button>
+
+              <button class="web-node voice" type="button" data-system="voice">
+                AI Voice Receptionist
+                <small>Calls answered</small>
+              </button>
+
+              <button class="web-node chat" type="button" data-system="chat">
+                Chat + Text
+                <small>Fast replies</small>
+              </button>
+
+              <button class="web-node reputation" type="button" data-system="reputation">
+                Reputation
+                <small>More reviews</small>
+              </button>
+
+              <button class="web-node email" type="button" data-system="email">
+                Email Marketing
+                <small>Follow-up</small>
+              </button>
+
+              <button class="web-node social" type="button" data-system="social">
+                Social Media
+                <small>Stay visible</small>
+              </button>
+
+              <button class="web-node reporting" type="button" data-system="reporting">
+                Reporting
+                <small>Owner view</small>
+              </button>
+            </div>
+
+            <article class="web-detail" id="systemDetail">
+              <div class="web-detail-kicker" id="systemKicker">CRM Core</div>
+              <h3 id="systemTitle">Your customer command center.</h3>
+              <p id="systemCopy">
+                The CRM is where contacts, calls, notes, lead status, appointments, reviews, and follow-up tasks belong. The goal is to get your business out of scattered spreadsheets and into one clean place your team can actually use.
+              </p>
+              <ul class="web-detail-list" id="systemList">
+                <li>Stores customer and lead information</li>
+                <li>Tracks status, notes, and next steps</li>
+                <li>Connects calls, messages, reviews, and campaigns</li>
+                <li>Gives the owner a clearer view of what is happening</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section id="setup" class="section snap-section">
         <div class="container panel">
           <div class="grid split-grid">
@@ -1231,11 +1648,30 @@
             </div>
 
             <div class="grid grid-2">
-              <article class="card reveal"><h3>01 We find what is being missed</h3><p class="copy">We look at calls, forms, texts, follow-up, reviews, and how your team tracks customers today.</p></article>
-              <article class="card reveal"><h3>02 We set up your CRM</h3><p class="copy">We move the process away from spreadsheets and into a cleaner system your team can actually use.</p></article>
-              <article class="card reveal"><h3>03 We build the AI workflows</h3><p class="copy">We teach the system your services, questions, handoffs, booking rules, and follow-up steps.</p></article>
-              <article class="card reveal"><h3>04 We train your team</h3><p class="copy">Your team learns where leads go, what AI handles, when humans step in, and how to use the CRM.</p></article>
-              <article class="card reveal"><h3>05 We keep improving it</h3><p class="copy">After launch, we review what is working, what is breaking, and what should be tuned next.</p></article>
+              <article class="card reveal">
+                <h3>01 We find what is being missed</h3>
+                <p class="copy">We look at calls, forms, texts, follow-up, reviews, and how your team tracks customers today.</p>
+              </article>
+
+              <article class="card reveal">
+                <h3>02 We set up your CRM</h3>
+                <p class="copy">We move the process away from spreadsheets and into a cleaner system your team can actually use.</p>
+              </article>
+
+              <article class="card reveal">
+                <h3>03 We build the AI workflows</h3>
+                <p class="copy">We teach the system your services, questions, handoffs, booking rules, and follow-up steps.</p>
+              </article>
+
+              <article class="card reveal">
+                <h3>04 We train your team</h3>
+                <p class="copy">Your team learns where leads go, what AI handles, when humans step in, and how to use the CRM.</p>
+              </article>
+
+              <article class="card reveal">
+                <h3>05 We keep improving it</h3>
+                <p class="copy">After launch, we review what is working, what is breaking, and what should be tuned next.</p>
+              </article>
             </div>
           </div>
         </div>
@@ -1249,10 +1685,25 @@
           </div>
 
           <div class="grid grid-2" style="margin-top:2.5rem;">
-            <article class="card reveal"><h3>Do we have to keep using spreadsheets?</h3><p class="copy">No. The goal is to get you away from spreadsheets. Konectd includes a CRM so customer details, lead status, notes, and follow-ups live in one place.</p></article>
-            <article class="card reveal"><h3>Is this just a chatbot?</h3><p class="copy">No. This is a full AI front desk and CRM system with white-glove setup. We build the workflows, train your team, and keep tuning it.</p></article>
-            <article class="card reveal"><h3>Will this replace our staff?</h3><p class="copy">No. It helps your staff by handling repetitive work, capturing details, and reminding the team what needs follow-up.</p></article>
-            <article class="card reveal"><h3>Who is this best for?</h3><p class="copy">Service businesses that get a lot of calls, book appointments, give estimates, need reviews, and depend on follow-up to win jobs.</p></article>
+            <article class="card reveal">
+              <h3>Do we have to keep using spreadsheets?</h3>
+              <p class="copy">No. The goal is to get you away from spreadsheets. Konectd includes a CRM so customer details, lead status, notes, and follow-ups live in one place.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3>Is this just a chatbot?</h3>
+              <p class="copy">No. This is a full AI front desk and CRM system with white-glove setup. We build the workflows, train your team, and keep tuning it.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3>Will this replace our staff?</h3>
+              <p class="copy">No. It helps your staff by handling repetitive work, capturing details, and reminding the team what needs follow-up.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3>Who is this best for?</h3>
+              <p class="copy">Service businesses that get a lot of calls, book appointments, give estimates, need reviews, and depend on follow-up to win jobs.</p>
+            </article>
           </div>
         </div>
       </section>
@@ -1362,6 +1813,7 @@
     const progress = document.getElementById("scrollProgress");
 
     function updateScrollProgress() {
+      if (!pageScroll || !progress) return;
       const scrollable = pageScroll.scrollHeight - pageScroll.clientHeight;
       const ratio = scrollable > 0 ? pageScroll.scrollTop / scrollable : 0;
       progress.style.height = Math.max(8, ratio * 100) + "%";
@@ -1391,6 +1843,107 @@
     toggle.addEventListener("click", () => {
       const current = root.getAttribute("data-theme") || "dark";
       applyTheme(current === "dark" ? "light" : "dark");
+    });
+
+    const systemData = {
+      crm: {
+        kicker: "CRM Core",
+        title: "Your customer command center.",
+        copy: "The CRM is where contacts, calls, notes, lead status, appointments, reviews, and follow-up tasks belong. The goal is to get your business out of scattered spreadsheets and into one clean place your team can actually use.",
+        list: [
+          "Stores customer and lead information",
+          "Tracks status, notes, and next steps",
+          "Connects calls, messages, reviews, and campaigns",
+          "Gives the owner a clearer view of what is happening"
+        ]
+      },
+      voice: {
+        kicker: "AI Voice Receptionist",
+        title: "Answer more calls without hiring a full front desk.",
+        copy: "The AI voice receptionist helps capture callers, ask basic questions, collect contact details, identify urgency, and route the next step so missed calls do not become missed jobs.",
+        list: [
+          "Handles common call questions",
+          "Captures name, number, service, location, and urgency",
+          "Routes estimate or appointment requests",
+          "Pushes call details into the CRM"
+        ]
+      },
+      chat: {
+        kicker: "Chat + Text",
+        title: "Give customers fast answers on the channels they already use.",
+        copy: "Chat and text help customers get quick responses without waiting on hold. They also make it easier to capture lead details and keep conversations tied to the CRM.",
+        list: [
+          "Website chat for new inquiries",
+          "Missed-call text-back",
+          "SMS follow-up and reminders",
+          "Conversation history connected to the CRM"
+        ]
+      },
+      reputation: {
+        kicker: "Reputation",
+        title: "Turn happy customers into visible trust.",
+        copy: "Reputation workflows help request reviews, draft responses, and track feedback so your best customer experiences show up when buyers compare you against competitors.",
+        list: [
+          "Review request workflows",
+          "Response drafting support",
+          "Feedback and sentiment tracking",
+          "Review visibility tied to customer activity"
+        ]
+      },
+      email: {
+        kicker: "Email Marketing",
+        title: "Follow up without relying on memory.",
+        copy: "Email marketing helps keep leads, past customers, and open opportunities warm. It is especially useful for estimates, seasonal services, reminders, and reactivation.",
+        list: [
+          "Estimate follow-up campaigns",
+          "Past customer reactivation",
+          "Service reminders",
+          "Offer and announcement emails"
+        ]
+      },
+      social: {
+        kicker: "Social Media Marketing",
+        title: "Stay visible even when the team is busy.",
+        copy: "Social content keeps the business present with customers and prospects. It can turn FAQs, reviews, offers, and service moments into simple posts that support trust.",
+        list: [
+          "Post ideas and content drafts",
+          "Review and project highlights",
+          "Seasonal reminders",
+          "Offer and education content"
+        ]
+      },
+      reporting: {
+        kicker: "Reporting",
+        title: "See what is working and what is slipping.",
+        copy: "Reporting helps the owner understand call volume, leads, follow-up, CRM activity, reviews, and campaigns so the business can improve instead of guessing.",
+        list: [
+          "Lead and call visibility",
+          "Follow-up tracking",
+          "Review and reputation movement",
+          "Owner-level performance view"
+        ]
+      }
+    };
+
+    const systemNodes = document.querySelectorAll(".web-node[data-system]");
+    const systemKicker = document.getElementById("systemKicker");
+    const systemTitle = document.getElementById("systemTitle");
+    const systemCopy = document.getElementById("systemCopy");
+    const systemList = document.getElementById("systemList");
+
+    function setSystemDetail(key) {
+      if (!systemKicker || !systemTitle || !systemCopy || !systemList) return;
+      const data = systemData[key] || systemData.crm;
+      systemKicker.textContent = data.kicker;
+      systemTitle.textContent = data.title;
+      systemCopy.textContent = data.copy;
+      systemList.innerHTML = data.list.map(item => `<li>${item}</li>`).join("");
+      systemNodes.forEach(node => node.classList.toggle("active", node.dataset.system === key));
+    }
+
+    systemNodes.forEach(node => {
+      node.addEventListener("click", () => setSystemDetail(node.dataset.system));
+      node.addEventListener("mouseenter", () => setSystemDetail(node.dataset.system));
     });
   </script>
 </body>
